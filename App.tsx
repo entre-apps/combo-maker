@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { Header } from './components/Header';
 import { PlanTypeSelector } from './components/PlanTypeSelector';
@@ -8,7 +9,7 @@ import { OmniExplanation } from './components/OmniExplanation';
 import { NoBreakExplanation } from './components/NoBreakExplanation';
 import { Summary } from './components/Summary';
 import { FloatingCart } from './components/FloatingCart';
-import { DB, PROFILES } from './data/products';
+import { DB } from './data/products';
 import type { PlanType, CartState, InternetPlan, TvPlan, AppInfo, OmniPlan, NoBreakPlan, Profile } from './types';
 import { formatCurrency } from './utils/formatters';
 import { ProfileSelector } from './components/ProfileSelector';
@@ -206,7 +207,7 @@ const App: React.FC = () => {
                 promo: cart.internet.promo,
             };
             items.push(internetItem);
-            message += `*Plano Internet:* ${internetItem.name} - ${formatCurrency(internetItem.price)} (Promoção: ${formatCurrency(internetItem.promoPrice)} ${internetItem.promo.replace('*', '')})\n`;
+            message += `*Plano Internet:* ${internetItem.name} - ${formatCurrency(internetItem.price)} (Promoção: ${formatCurrency(internetItem.promoPrice)} ${internetItem.promo!.replace('*', '')})\n`;
         } else {
              promoTotal += cart.internet.price;
              fullTotal += cart.internet.price;
