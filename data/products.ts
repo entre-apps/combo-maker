@@ -1,0 +1,205 @@
+// FIX: Correctly import all necessary types from the `types` module.
+import type { InternetPlan, TvPlan, AppInfo, OmniPlan, NoBreakPlan, Profile, PlanType } from '../types';
+
+interface DbData {
+    internet: {
+        casa: InternetPlan[];
+        empresa: InternetPlan[];
+    };
+    tv: TvPlan[];
+    apps: AppInfo[];
+    omni: OmniPlan[];
+    nobreak: NoBreakPlan;
+}
+
+export const PROFILES: Record<PlanType, Profile[]> = {
+    casa: [
+        {
+            id: 'profile-gamer',
+            name: 'Gamer Pro',
+            description: 'Para quem busca a menor latência e máxima velocidade para dominar nos jogos online.',
+            icon: 'gamer',
+            config: {
+                internetId: 'res-920',
+                appIds: ['app-exitlag'],
+                omniId: 'omni-cabo',
+                nobreakId: 'nobreak',
+            }
+        },
+        {
+            id: 'profile-family',
+            name: 'Família Conectada',
+            description: 'Streaming em 4K, videochamadas e muita diversão para todos em casa, ao mesmo tempo.',
+            icon: 'family',
+            config: {
+                internetId: 'res-800',
+                tvId: 'tv-plus',
+                appIds: ['app-disney-ads', 'app-playkids'],
+                omniId: 'omni-5',
+            }
+        },
+        {
+            id: 'profile-home-office',
+            name: 'Home Office Pro',
+            description: 'A estabilidade e velocidade que você precisa para trabalhar sem interrupções e com máxima produtividade.',
+            icon: 'home-office',
+            config: {
+                internetId: 'res-800',
+                appIds: ['app-kaspersky-1'],
+                nobreakId: 'nobreak',
+            }
+        },
+    ],
+    empresa: [
+         {
+            id: 'profile-small-business',
+            name: 'Meu Negócio',
+            description: 'A conexão confiável para as operações diárias, desde o caixa até o contato com clientes.',
+            icon: 'small-business',
+            config: {
+                internetId: 'emp-500',
+                nobreakId: 'nobreak',
+            }
+        },
+        {
+            id: 'profile-growing-business',
+            name: 'Empresa em Expansão',
+            description: 'Alta performance para equipes que dependem da nuvem, videochamadas e fluxo intenso de dados.',
+            icon: 'growing-business',
+            config: {
+                internetId: 'emp-920',
+                omniId: 'omni-6',
+                nobreakId: 'nobreak',
+            }
+        },
+    ]
+};
+
+
+// FIX: Replaced outdated product data with the correct, more detailed data structure.
+export const DB: DbData = {
+    internet: {
+        casa: [
+            { 
+                id: 'res-500', 
+                name: '500 Mega', 
+                description: 'Sob medida para navegação, redes sociais e video chamadas do dia a dia',
+                features: ['Instalação Gratuita*', 'Wifi 5', 'Upload 100 Mega'],
+                price: 99.90, 
+                priceDetails: 'R$99,90'
+            },
+            { 
+                id: 'res-600', 
+                name: '600 Mega', 
+                description: 'Mais velocidade para as atividades do seu dia a dia sem travamentos',
+                features: ['Instalação Gratuita*', 'Wifi 5', 'Upload 150 Mega'],
+                price: 112.90, 
+                priceDetails: 'R$112,90'
+            },
+            { 
+                id: 'res-800', 
+                name: '800 Mega', 
+                description: 'Versátil para multiacessos de jogos, home office e streaming em alta qualidade',
+                features: ['Instalação Gratuita*', 'Wifi 6 (mais estável)', 'Upload 400 Mega'],
+                price: 89.90,
+                fullPrice: 114.90, 
+                priceDetails: 'R$89,90', 
+                originalPrice: 'de: R$114,90', 
+                promo: '*Nos primeiros 3 meses', 
+                bestOffer: true, 
+                comboDiscount: true 
+            },
+            { 
+                id: 'res-920', 
+                name: '920 Mega', 
+                description: 'Ampla conectividade para gamers e criadores de conteúdo',
+                highlight: 'Com 2 pontos OMNI WiFi (maior cobertura)',
+                features: ['Instalação Gratuita*', 'Wifi 6 (mais estável)', 'Upload 500 Mega'],
+                price: 169.90, 
+                priceDetails: 'R$169,90', 
+                comboDiscount: true 
+            }
+        ],
+        empresa: [
+             { 
+                id: 'emp-200', 
+                name: '200 MEGA', 
+                description: 'Ideal para pequenas empresas e escritórios com foco em e-mail e navegação.',
+                features: ['Instalação Gratuita*', 'Wifi 5', 'Upload 100 Mega'],
+                price: 114.90, 
+                priceDetails: 'R$114,90'
+            },
+            { 
+                id: 'emp-500', 
+                name: '500 MEGA', 
+                description: 'Perfeito para empresas que precisam de mais velocidade para transferências de arquivos e reuniões online.',
+                features: ['Instalação Gratuita*', 'Wifi 5', 'Upload 250 Mega'],
+                price: 119.90, 
+                priceDetails: 'R$119,90'
+            },
+            { 
+                id: 'emp-800', 
+                name: '800 MEGA', 
+                description: 'Alta performance para empresas com grande fluxo de dados, multiacessos e uso de sistemas na nuvem.',
+                features: ['Instalação Gratuita*', 'Wifi 6 (mais estável)', 'Upload 400 Mega'],
+                price: 169.90, 
+                priceDetails: 'R$169,90'
+            },
+            { 
+                id: 'emp-920', 
+                name: '920 MEGA', 
+                description: 'Conectividade máxima para empresas que demandam altíssima velocidade e estabilidade para operações críticas.',
+                features: ['Instalação Gratuita*', '2 roteadores WIFI 6', 'Upload 500 Mega'],
+                price: 179.90, 
+                priceDetails: 'R$179,90', 
+                bestOffer: true 
+            }
+        ]
+    },
+    tv: [
+        { id: 'tv-essential', name: 'Essential', details: '15+ canais', price: 15.00, comboPrice: 10.00 },
+        { id: 'tv-cine', name: 'Cine & Sports', details: '30+ canais com Paramount+', price: 30.00, comboPrice: 23.00 },
+        { id: 'tv-plus', name: 'Plus', details: '50+ canais com Paramount+ e Telecine', price: 60.00, comboPrice: 50.00 },
+        { id: 'tv-premium', name: 'Premium', details: '55+ canais com Paramount+, Telecine e Premiere', price: 90.00, comboPrice: 80.00 }
+    ],
+    apps: [
+        { id: 'app-deezer', name: 'Deezer', tier: 'Standard', category: 'Música', details: 'Streaming de música e podcasts com playlists, rádios e recomendações personalizadas.', price: 20, comboPrice: 15 },
+        { id: 'app-looke', name: 'Looke', tier: 'Standard', category: 'Séries e Filmes', details: 'Streaming brasileiro com filmes, séries e área infantil (Looke Kids).', price: 20, comboPrice: 15 },
+        { id: 'app-kiddle-1', name: 'Kiddle Pass 1 usuário', tier: 'Standard', category: 'Infantil', details: 'Plataforma de experiências educacionais ao vivo e em vídeo para crianças até 12 anos.', price: 20, comboPrice: 15 },
+        { id: 'app-nutri', name: '+QNutri', tier: 'Standard', category: 'Saúde e Bem estar', details: 'Aplicativo de acompanhamento nutricional e bem‑estar (curadoria e planos alimentares).', price: 20, comboPrice: 15 },
+        { id: 'app-kaspersky-1', name: 'Kaspersky Standard (1 licença)', tier: 'Standard', category: 'Segurança Digital', details: 'Antivírus e proteção essencial com navegação segura e recursos básicos.', price: 20, comboPrice: 15 },
+        { id: 'app-exitlag', name: 'Exit Lag', tier: 'Standard', category: 'Games', details: 'Otimizador de rotas para jogos online que reduz lag, perda de pacotes e jitter.', price: 20, comboPrice: 15 },
+        { id: 'app-playkids', name: 'PlayKids+', tier: 'Standard', category: 'Infantil', details: 'Plataforma infantil segura com desenhos, jogos educativos e livros digitais.', price: 20, comboPrice: 15 },
+        { id: 'app-hubvantagens', name: 'Hub Vantagens', tier: 'Standard', category: 'Descontos', details: 'Clube de benefícios com cupons, descontos em marcas parceiras e cashback.', price: 20, comboPrice: 15 },
+        { id: 'app-ubook', name: 'Ubook Plus', tier: 'Standard', category: 'Educação e Leitura', details: 'App de audiolivros, e‑books, podcasts e revistas em um só catálogo.', price: 20, comboPrice: 15 },
+        { id: 'app-estuda', name: 'Estuda+', tier: 'Standard', category: 'Educação e Leitura', details: 'App educacional com apostilas em áudio e materiais para reforço e vestibulares.', price: 20, comboPrice: 15 },
+        { id: 'app-pequenosleitores', name: 'Pequenos Leitores', tier: 'Standard', category: 'Infantil', details: 'Biblioteca infantil com ebooks e audiobooks selecionados por faixa etária.', price: 20, comboPrice: 15 },
+        { id: 'app-fluid', name: 'Fluid', tier: 'Standard', category: 'Saúde e Bem estar', details: 'App de bem‑estar com yoga, meditação guiada, respiração e sons relaxantes.', price: 20, comboPrice: 15 },
+        { id: 'app-socialcomics', name: 'Social Comics', tier: 'Standard', category: 'Educação e Leitura', details: 'Streaming de HQs e quadrinhos digitais com catálogo atualizado diariamente.', price: 20, comboPrice: 15 },
+        { id: 'app-revistaria', name: 'Revistaria', tier: 'Standard', category: 'Educação e Leitura', details: 'Banca digital com acesso a revistas brasileiras em formato digital/PDF.', price: 20, comboPrice: 15 },
+        { id: 'app-playlist', name: 'Playlist', tier: 'Standard', category: 'Música', details: 'A plataforma oferece mais de 100 playlists de diversos gêneros e estilos musicais, todas elaboradas por profissionais do mercado. Os usuários também podem ouvir a rádio streaming, com músicas, notícias e entrevistas 24 horas por dia', price: 20, comboPrice: 15 },
+        { id: 'app-kiddle-2', name: 'Kiddle Pass 2 usuários', tier: 'Advanced', category: 'Infantil', details: 'Plataforma de atividades educacionais e de lazer para crianças, ao vivo e em vídeo.', price: 30, comboPrice: 25 },
+        { id: 'app-kaspersky-3', name: 'Kaspersky Standard (3 licenças)', tier: 'Advanced', category: 'Segurança Digital', details: 'Antivírus e proteção essencial com navegação segura e recursos básicos.', price: 30, comboPrice: 25 },
+        { id: 'app-curtaon', name: 'Curta ON', tier: 'Advanced', category: 'Séries e Filmes', details: 'Streaming do Canal Curta! com documentários e séries sobre artes e humanidades.', price: 30, comboPrice: 25 },
+        { id: 'app-ojornalista', name: 'O Jornalista', tier: 'Advanced', category: 'Educação e Leitura', details: 'App para ler e ouvir jornais, revistas e podcasts de notícias brasileiros.', price: 30, comboPrice: 25 },
+        { id: 'app-disney-ads', name: 'Disney+ (com anúncio)', tier: 'Top', category: 'Séries e Filmes', details: 'Streaming da Disney com anúncios; catálogo Disney, Pixar, Marvel, Star Wars e NatGeo.', price: 35, comboPrice: 30 },
+        { id: 'app-hbo-ads', name: 'HBO Max (com anúncio)', tier: 'Top', category: 'Séries e Filmes', details: 'Plano com anúncios do Max (HBO), com filmes, séries e esportes selecionados.', price: 35, comboPrice: 30 },
+        { id: 'app-cindie', name: 'C Indie', tier: 'Top', category: 'Séries e Filmes', details: 'Cindie: streaming de cinema e séries independentes, curadoria internacional.', price: 35, comboPrice: 30 },
+        { id: 'app-leitura360', name: 'Leitura 360', tier: 'Top', category: 'Educação e Leitura', details: 'Plataforma de leitura multimídia com audiolivros e revistas', price: 35, comboPrice: 30 },
+        { id: 'app-disney-noads', name: 'Disney+', tier: 'Premium', category: 'Séries e Filmes', details: 'Streaming da Disney sem anúncios em planos elegíveis; filmes e séries Disney, Pixar, Marvel, Star Wars e NatGeo.', price: 40, comboPrice: 35 },
+        { id: 'app-hbo-noads', name: 'HBO Max', tier: 'Premium', category: 'Séries e Filmes', details: 'Streaming Max (HBO) com filmes, séries e esportes; opções sem anúncios.', price: 40, comboPrice: 35 },
+        { id: 'app-kaspersky-plus', name: 'Kaspersky Plus', tier: 'Premium', category: 'Segurança Digital', details: 'Segurança avançada com antivírus e extras como VPN e monitoramento adicional.', price: 40, comboPrice: 35 },
+        { id: 'app-nba', name: 'NBA League Pass', tier: 'Premium', category: 'Esportes', details: 'Serviço oficial para assistir jogos da NBA ao vivo e on‑demand.', price: 40, comboPrice: 35 },
+        { id: 'app-smartcontent', name: 'Smart Content', tier: 'Premium', category: 'Educação e Leitura', details: 'App de aprendizado rápido com resumos, vídeos e áudios curados sobre inovação e negócios.', price: 40, comboPrice: 35 },
+        { id: 'app-queimadiaria', name: 'Queima Diária', tier: 'Premium', category: 'Saúde e Bem estar', details: 'App de treinos em casa focado em queima de gordura abdominal e condicionamento.', price: 40, comboPrice: 35 },
+        { id: 'app-zen', name: 'Zen', tier: 'Premium', category: 'Saúde e Bem estar', details: 'App de meditação e sono com conteúdos para ansiedade, sono e bem‑estar.', price: 40, comboPrice: 35 }
+    ],
+    omni: [
+        { id: 'omni-cabo', name: 'OMNI CABO', details: 'Ponto adicional cabeado', price: 8.00 },
+        { id: 'omni-5', name: 'OMNI WIFI 5', details: 'Ponto adicional Wi-Fi 5', price: 26.00 },
+        { id: 'omni-6', name: 'OMNI WIFI 6', details: 'Ponto adicional Wi-Fi 6', price: 32.00 }
+    ],
+    nobreak: {
+        id: 'nobreak', name: 'Mini NoBreak', details: 'Aluguel do equipamento', price: 18.00
+    }
+};
