@@ -10,7 +10,7 @@ import { NoBreakExplanation } from './components/NoBreakExplanation';
 import { Summary } from './components/Summary';
 import { StickySidebar } from './components/StickySidebar';
 import { MobileBottomBar } from './components/MobileBottomBar';
-import { DB } from './data/products';
+import { DB, PROFILES } from './data/products';
 import type { PlanType, CartState, InternetPlan, TvPlan, AppInfo, OmniPlan, NoBreakPlan, Profile } from './types';
 import { formatCurrency } from './utils/formatters';
 import { ProfileSelector } from './components/ProfileSelector';
@@ -349,6 +349,9 @@ const App: React.FC = () => {
     const internetPlans = cart.planType ? DB.internet[cart.planType] : [];
     const showAddons = !!cart.internet;
     const isNoBreakSelected = !!cart.nobreak;
+    
+    // Verifica se existem perfis disponíveis para o tipo de plano selecionado
+    const hasProfiles = cart.planType && PROFILES[cart.planType]?.length > 0;
 
     const ProtectedIcon = () => (
         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 inline-block ml-3 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -397,8 +400,8 @@ const App: React.FC = () => {
                                     <Section
                                         title="1. Escolha sua Internet Premium"
                                         subtitle={`A melhor conexão para ${cart.planType === 'casa' ? 'sua casa' : 'sua empresa'}.`}
-                                        onSecondaryAction={() => handleScrollTo(sectionsRef.profileSelector)}
-                                        secondaryActionText="Ver Combos Sugeridos"
+                                        onSecondaryAction={hasProfiles ? () => handleScrollTo(sectionsRef.profileSelector) : undefined}
+                                        secondaryActionText={hasProfiles ? "Ver Combos Sugeridos" : undefined}
                                     >
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                             {internetPlans.map(plan => (
