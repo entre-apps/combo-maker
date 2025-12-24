@@ -17,7 +17,7 @@ interface PlanCardProps {
 }
 
 const CheckIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-green-500 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-green-500 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
     </svg>
 );
@@ -28,7 +28,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, isSelected, onSelect, 
     const isHighlighted = 'bestOffer' in plan && plan.bestOffer;
 
     const heightClass = autoHeight ? 'h-auto' : 'h-full';
-    const cardBaseClasses = `relative flex flex-col ${heightClass} rounded-2xl p-6 border transition-all duration-300 w-full group cursor-pointer`;
+    const cardBaseClasses = `relative flex flex-col ${heightClass} rounded-2xl p-5 border transition-all duration-300 w-full group cursor-pointer`;
     
     // Logic for dynamic borders and shadows (Glow effect)
     const cardStateClasses = isSelected
@@ -51,7 +51,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, isSelected, onSelect, 
         ? (planType === 'internet' ? 'Plano Selecionado' : 'Remover') 
         : (planType === 'internet' ? 'Escolher este' : 'Adicionar');
 
-    const buttonBaseClasses = 'w-full font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out text-sm tracking-wide';
+    const buttonBaseClasses = 'w-full font-bold py-2 px-4 rounded-xl transition-all duration-300 ease-in-out text-sm tracking-wide';
     
     const buttonSelectedClasses = isDark
             ? 'bg-red-500/10 text-red-400 border border-red-500/50 hover:bg-red-500/20'
@@ -91,29 +91,29 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, isSelected, onSelect, 
             }
             
             return (
-                <div className="mt-4 mb-6">
-                    <div className="h-6 flex items-center">
+                <div className="mt-2 mb-4">
+                    <div className="h-5 flex items-center">
                         {originalPrice && (
-                            <span className={`text-sm line-through ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                            <span className={`text-xs line-through ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
                                 {formatCurrency(originalPrice)}
                             </span>
                         )}
                         {promoText && (
-                            <span className="ml-2 text-[10px] font-bold uppercase tracking-wider bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                            <span className="ml-2 text-[9px] font-bold uppercase tracking-wider bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
                                 Promo
                             </span>
                         )}
                     </div>
 
                     <div className="flex items-baseline gap-1">
-                        <p className={`text-4xl font-black tracking-tight ${(isDark) ? 'text-white' : 'text-gray-900'}`}>
+                        <p className={`text-3xl font-black tracking-tight ${(isDark) ? 'text-white' : 'text-gray-900'}`}>
                             {formatCurrency(currentPrice).replace(',00', '')}
                         </p>
-                        <span className={`text-sm font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>/mês</span>
+                        <span className={`text-xs font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>/mês</span>
                     </div>
                     
                      {promoText && (
-                        <p className="text-xs text-gray-500 mt-1">{promoText}</p>
+                        <p className="text-[10px] text-gray-500 mt-0.5">{promoText}</p>
                     )}
                 </div>
             );
@@ -124,7 +124,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, isSelected, onSelect, 
     return (
         <button onClick={onSelect} className={`${cardBaseClasses} ${cardStateClasses} ${cardColorClasses}`}>
             {isHighlighted && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-entre-orange text-white text-[10px] font-black px-3 py-1 rounded-full shadow-md z-10 uppercase tracking-widest">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-entre-orange text-white text-[10px] font-black px-3 py-1 rounded-full shadow-md z-10 uppercase tracking-widest whitespace-nowrap">
                     {bestOfferText}
                 </div>
             )}
@@ -149,25 +149,25 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, isSelected, onSelect, 
                             </div>
                         </div>
                         {hasComboDiscount && (
-                            <div className="bg-green-50 text-green-700 text-xs font-bold px-2 py-1 rounded mb-4 inline-block self-center">
+                            <div className="bg-green-50 text-green-700 text-[10px] font-bold px-2 py-1 rounded mb-4 inline-block self-center">
                                 Preço Especial Combo
                             </div>
                         )}
                     </>
                 ) : (
                     <>
-                        <h3 className={`text-2xl font-black mb-2 text-left ${titleColor}`}>{plan.name}</h3>
+                        <h3 className={`text-xl font-black mb-1 text-left ${titleColor}`}>{plan.name}</h3>
                         
                         {'description' in plan ? (
-                            <p className={`text-sm mb-6 text-left leading-relaxed min-h-[40px] ${textColor}`}>{(plan as InternetPlan).description}</p>
+                            <p className={`text-xs mb-4 text-left leading-relaxed min-h-[32px] ${textColor}`}>{(plan as InternetPlan).description}</p>
                         ) : (
-                            <p className={`text-sm mb-6 text-left leading-relaxed ${textColor}`}>{(plan as OmniPlan | NoBreakPlan).details}</p>
+                            <p className={`text-xs mb-4 text-left leading-relaxed ${textColor}`}>{(plan as OmniPlan | NoBreakPlan).details}</p>
                         )}
                         
                         {'features' in plan && (
-                            <ul className="text-left space-y-3 mb-6">
+                            <ul className="text-left space-y-2 mb-4">
                                 {(plan as InternetPlan).features.map((feature, index) => (
-                                    <li key={index} className={`flex items-start text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                                    <li key={index} className={`flex items-start text-xs ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
                                         <CheckIcon />
                                         <span className="leading-tight">{formatFeature(feature)}</span>
                                     </li>
@@ -176,7 +176,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, isSelected, onSelect, 
                         )}
 
                         {'highlight' in plan && plan.highlight && (
-                            <div className={`text-xs font-bold rounded-lg p-3 mb-4 flex items-center justify-center text-center leading-tight ${
+                            <div className={`text-[10px] font-bold rounded-lg p-2 mb-4 flex items-center justify-center text-center leading-tight ${
                                 isHighlighted 
                                 ? "bg-entre-purple-light text-entre-purple-dark border border-entre-purple-mid/20"
                                 : "bg-gray-100 text-gray-600"
