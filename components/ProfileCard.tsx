@@ -55,7 +55,6 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ profile, planType, isS
             'app-hbo-noads': 'hbo_max_logo.png',
             'app-hbo-ads': 'hbo_max_logo.png',
             'app-exitlag': 'exit_lag_logo.png',
-            // Adicione outros mapeamentos manuais se necessário
         };
 
         if (manualMap[appId]) {
@@ -126,7 +125,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ profile, planType, isS
                                             <img 
                                                 src={logoUrl} 
                                                 alt={app.name} 
-                                                className="w-full h-full object-contain brightness-0 invert" 
+                                                className="w-full h-full object-contain" 
                                                 onError={(e) => {
                                                     const target = e.target as HTMLImageElement;
                                                     target.style.display = 'none';
