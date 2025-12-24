@@ -19,7 +19,6 @@ export const AppCard: React.FC<AppCardProps> = ({ app, isSelected, onSelect, app
     // Verifica se o app realmente tem um preço menor no combo
     const actuallyHasDiscount = hasDiscount && (app.price > app.comboPrice);
 
-    // AQUI OCORRIA O ERRO: A variável isFeatured deve ser usada nesta lógica de classes
     const cardClasses = `relative flex flex-col h-full bg-white rounded-xl p-4 border-2 transition-all duration-300 shadow-lg text-left w-full ${
         isSelected 
             ? 'border-entre-purple-dark ring-4 ring-entre-purple-mid/30' 
@@ -42,8 +41,22 @@ export const AppCard: React.FC<AppCardProps> = ({ app, isSelected, onSelect, app
         ? 'bg-entre-orange text-white border border-entre-orange shadow-md hover:bg-orange-600'
         : 'bg-white text-entre-purple-dark border border-entre-purple-mid shadow-sm hover:bg-entre-purple-light';
 
-    const slugify = (text: string): string => {
-        return text
+    // Função auxiliar para garantir os nomes corretos das imagens (Igual ao ProfileCard)
+    const getLogoUrl = (appId: string, appName: string): string => {
+        const manualMap: Record<string, string> = {
+            'app-deezer': 'deezer_logo.png',
+            'app-disney-noads': 'disneyplus_logo.png',
+            'app-disney-ads': 'disneyplus_logo.png',
+            'app-hbo-noads': 'hbo_max_logo.png',
+            'app-hbo-ads': 'hbo_max_logo.png',
+            'app-exitlag': 'exit_lag_logo.png',
+        };
+
+        if (manualMap[appId]) {
+            return `/images/${manualMap[appId]}`;
+        }
+
+        const slug = appName
             .toString()
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '')
@@ -54,10 +67,11 @@ export const AppCard: React.FC<AppCardProps> = ({ app, isSelected, onSelect, app
             .replace(/[^a-z0-9\s-]/g, '')
             .replace(/\s+/g, '_')
             .replace(/-+/g, '_');
+        
+        return `/images/${slug}_logo.png`;
     };
 
-    const logoName = `${slugify(app.name)}_logo.png`;
-    const logoUrl = `/images/${logoName}`;
+    const logoUrl = getLogoUrl(app.id, app.name);
     
     return (
         <button
@@ -92,7 +106,7 @@ export const AppCard: React.FC<AppCardProps> = ({ app, isSelected, onSelect, app
                                 target.style.display = 'none';
                                 const parent = target.parentElement;
                                 if(parent) {
-                                     parent.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>`;
+                                     parent.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>`;
                                 }
                             }}
                         />
