@@ -46,8 +46,23 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ profile, planType, isS
         return { current, full };
     }, [profile, planType]);
 
-    const slugify = (text: string): string => {
-        return text
+    // Função auxiliar para garantir os nomes corretos das imagens
+    const getLogoUrl = (appId: string, appName: string): string => {
+        const manualMap: Record<string, string> = {
+            'app-deezer': 'deezer_logo.png',
+            'app-disney-noads': 'disneyplus_logo.png',
+            'app-disney-ads': 'disneyplus_logo.png',
+            'app-hbo-noads': 'hbo_max_logo.png',
+            'app-hbo-ads': 'hbo_max_logo.png',
+            'app-exitlag': 'exit_lag_logo.png',
+            // Adicione outros mapeamentos manuais se necessário
+        };
+
+        if (manualMap[appId]) {
+            return `/images/${manualMap[appId]}`;
+        }
+
+        const slug = appName
             .toString()
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '')
@@ -58,6 +73,8 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ profile, planType, isS
             .replace(/[^a-z0-9\s-]/g, '')
             .replace(/\s+/g, '_')
             .replace(/-+/g, '_');
+        
+        return `/images/${slug}_logo.png`;
     };
 
     return (
@@ -99,7 +116,9 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ profile, planType, isS
                          {profile.config.appIds?.map((appId, index) => {
                             const app = DB.apps.find(a => a.id === appId);
                             if (!app) return null;
-                            const logoUrl = `/images/${slugify(app.name)}_logo.png`;
+                            
+                            const logoUrl = getLogoUrl(app.id, app.name);
+
                             return (
                                 <React.Fragment key={appId}>
                                     <div className="flex flex-col items-center gap-2 group">
@@ -108,6 +127,10 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ profile, planType, isS
                                                 src={logoUrl} 
                                                 alt={app.name} 
                                                 className="w-full h-full object-contain brightness-0 invert" 
+                                                onError={(e) => {
+                                                    const target = e.target as HTMLImageElement;
+                                                    target.style.display = 'none';
+                                                }}
                                             />
                                         </div>
                                         <span className="text-[10px] font-black uppercase tracking-tight text-white">
