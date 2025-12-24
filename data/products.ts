@@ -46,29 +46,7 @@ export const PROFILES: Record<PlanType, Profile[]> = {
             }
         },
     ],
-    empresa: [
-         {
-            id: 'profile-small-business',
-            name: 'Meu Negócio',
-            description: 'A conexão confiável para as operações diárias, desde o caixa até o contato com clientes.',
-            icon: 'small-business',
-            config: {
-                internetId: 'emp-500',
-                nobreakId: 'nobreak',
-            }
-        },
-        {
-            id: 'profile-growing-business',
-            name: 'Empresa em Expansão',
-            description: 'Alta performance para equipes que dependem da nuvem, videochamadas e fluxo intenso de dados.',
-            icon: 'growing-business',
-            config: {
-                internetId: 'emp-920',
-                omniId: 'omni-6',
-                nobreakId: 'nobreak',
-            }
-        },
-    ]
+    empresa: [] // Perfis empresariais removidos conforme solicitado
 };
 
 
