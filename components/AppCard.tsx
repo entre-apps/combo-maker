@@ -19,11 +19,12 @@ export const AppCard: React.FC<AppCardProps> = ({ app, isSelected, onSelect, app
     // Verifica se o app realmente tem um preço menor no combo
     const actuallyHasDiscount = hasDiscount && (app.price > app.comboPrice);
 
+    // AQUI OCORRIA O ERRO: A variável isFeatured deve ser usada nesta lógica de classes
     const cardClasses = `relative flex flex-col h-full bg-white rounded-xl p-4 border-2 transition-all duration-300 shadow-lg text-left w-full ${
         isSelected 
             ? 'border-entre-purple-dark ring-4 ring-entre-purple-mid/30' 
             : isFeatured 
-                ? 'border-entre-orange/30 shadow-orange-100/50' // Estilo para destaque
+                ? 'border-entre-orange/30 shadow-orange-100/50' // Uso do isFeatured para destaque
                 : 'border-transparent'
     } ${
         isDisabled
@@ -36,6 +37,7 @@ export const AppCard: React.FC<AppCardProps> = ({ app, isSelected, onSelect, app
     
     const buttonSelectedClasses = 'bg-white text-red-600 border border-red-500 shadow-sm hover:bg-red-50';
     
+    // Uso do isFeatured também nos botões
     const buttonDefaultClasses = isFeatured 
         ? 'bg-entre-orange text-white border border-entre-orange shadow-md hover:bg-orange-600'
         : 'bg-white text-entre-purple-dark border border-entre-purple-mid shadow-sm hover:bg-entre-purple-light';
