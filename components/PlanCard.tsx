@@ -1,7 +1,5 @@
 
-
 import React from 'react';
-// FIX: Correctly import all necessary types from the `types` module.
 import type { InternetPlan, TvPlan, OmniPlan, NoBreakPlan } from '../types';
 import { formatCurrency } from '../utils/formatters';
 
@@ -15,55 +13,73 @@ interface PlanCardProps {
     bestOfferText?: string;
     hasComboDiscount?: boolean;
     isDark?: boolean;
+    autoHeight?: boolean;
 }
 
 const CheckIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-green-500 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
     </svg>
 );
 
-export const PlanCard: React.FC<PlanCardProps> = ({ plan, isSelected, onSelect, planType, bestOfferText = 'Melhor Oferta', hasComboDiscount, isDark = false }) => {
+export const PlanCard: React.FC<PlanCardProps> = ({ plan, isSelected, onSelect, planType, bestOfferText = 'Melhor Oferta', hasComboDiscount, isDark = false, autoHeight = false }) => {
     
     const isTvPlan = plan.id.startsWith('tv-');
     const isHighlighted = 'bestOffer' in plan && plan.bestOffer;
 
-    const cardBaseClasses = 'relative flex flex-col h-full rounded-xl p-6 border-2 transition-all duration-300 shadow-lg text-center w-full';
-    const cardColorClasses = isHighlighted
-        ? `bg-entre-purple-dark text-white border-transparent`
+    const heightClass = autoHeight ? 'h-auto' : 'h-full';
+    const cardBaseClasses = `relative flex flex-col ${heightClass} rounded-2xl p-6 border transition-all duration-300 w-full group cursor-pointer`;
+    
+    // Logic for dynamic borders and shadows (Glow effect)
+    const cardStateClasses = isSelected
+        ? isDark 
+            ? 'bg-gray-800 border-entre-purple-mid shadow-[0_0_20px_rgba(157,78,221,0.3)] scale-[1.02]'
+            : 'bg-white border-entre-purple-mid ring-1 ring-entre-purple-mid shadow-[0_0_25px_rgba(157,78,221,0.15)] scale-[1.02]'
         : isDark
-            ? `bg-gray-800 text-white ${isSelected ? 'border-entre-purple-mid ring-4 ring-entre-purple-mid/30' : 'border-gray-700'}`
-            : `bg-white ${isSelected ? 'border-entre-purple-dark ring-4 ring-entre-purple-mid/30' : 'border-transparent'}`;
+            // Alterado aqui: Removemos o hover:bg-gray-700 e adicionamos borda mais clara e leve elevação
+            ? 'bg-gray-800 border-gray-700 hover:border-gray-400 hover:shadow-[0_10px_25px_-5px_rgba(0,0,0,0.5)] hover:-translate-y-1'
+            : 'bg-white border-gray-200 hover:border-entre-purple-mid/50 hover:shadow-lg hover:-translate-y-1';
+
+    const cardColorClasses = isHighlighted && !isSelected
+        ? `bg-gradient-to-b from-white to-purple-50 border-entre-purple-light` 
+        : '';
     
-    const cardHoverClasses = isSelected ? '' 
-        : (isHighlighted || !isDark) 
-            ? 'transform hover:-translate-y-1 active:scale-95'
-            : 'hover:border-entre-orange';
-    
-    const titleColor = (isDark || isHighlighted) ? 'text-white' : 'text-entre-purple-dark';
-    const textColor = (isDark || isHighlighted) ? 'text-gray-300' : 'text-gray-600';
+    const titleColor = (isDark) ? 'text-white' : 'text-entre-purple-dark';
+    const textColor = (isDark) ? 'text-gray-300' : 'text-gray-600';
     
     const buttonText = isSelected 
-        ? (planType === 'internet' ? 'Selecionado ✓' : 'Remover') 
-        : (planType === 'internet' ? 'Selecionar Plano' : 'Adicionar');
+        ? (planType === 'internet' ? 'Plano Selecionado' : 'Remover') 
+        : (planType === 'internet' ? 'Escolher este' : 'Adicionar');
 
-    const buttonBaseClasses = 'w-full font-bold py-3 px-4 rounded-lg shadow-md transition-all duration-300 ease-in-out';
-    const buttonSelectedClasses = isHighlighted
-        ? 'bg-entre-orange text-white'
-        : isDark
-            ? 'bg-gray-700 text-red-400 border border-red-500 hover:bg-gray-600'
-            : 'bg-white text-red-600 border border-red-500 shadow-sm hover:bg-red-50';
+    const buttonBaseClasses = 'w-full font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out text-sm tracking-wide';
+    
+    const buttonSelectedClasses = isDark
+            ? 'bg-red-500/10 text-red-400 border border-red-500/50 hover:bg-red-500/20'
+            : 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100';
     
     const buttonDefaultClasses = isHighlighted
-        ? 'bg-white text-entre-purple-dark hover:bg-gray-200'
+        ? 'bg-entre-orange text-white shadow-md hover:bg-orange-500 hover:shadow-lg transform hover:scale-[1.02]'
         : isDark
-            ? 'bg-entre-purple-mid text-white hover:bg-entre-purple-dark'
-            : 'bg-entre-purple-mid text-white hover:bg-entre-purple-dark';
+            ? 'bg-gray-700 text-white hover:bg-entre-purple-mid border border-gray-600 hover:border-entre-purple-mid'
+            : 'bg-entre-purple-light text-entre-purple-dark hover:bg-entre-purple-mid hover:text-white';
+
+    // Helper to bold specific keywords
+    const formatFeature = (text: string) => {
+        const keywords = ['Wifi 6', 'Upload', 'Instalação Gratuita', 'roteadores'];
+        const parts = text.split(new RegExp(`(${keywords.join('|')})`, 'gi'));
+        return (
+            <span>
+                {parts.map((part, i) => 
+                    keywords.some(k => k.toLowerCase() === part.toLowerCase()) 
+                        ? <strong key={i} className={isDark ? "text-entre-purple-light" : "text-entre-purple-dark"}>{part}</strong> 
+                        : part
+                )}
+            </span>
+        );
+    };
 
     const renderPrice = () => {
-        if (isTvPlan) {
-            return null;
-        }
+        if (isTvPlan) return null;
         
         if ('price' in plan) {
             let currentPrice = plan.price;
@@ -75,22 +91,30 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, isSelected, onSelect, 
             }
             
             return (
-                <div className="mb-6">
-                    {/* Placeholder for original price to ensure alignment */}
-                    <div className="h-7 flex items-center justify-center">
+                <div className="mt-4 mb-6">
+                    <div className="h-6 flex items-center">
                         {originalPrice && (
-                            <p className={`line-through text-lg ${(isDark || isHighlighted) ? 'text-gray-400' : 'text-gray-500'}`}>{formatCurrency(originalPrice)}</p>
+                            <span className={`text-sm line-through ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                                {formatCurrency(originalPrice)}
+                            </span>
                         )}
-                    </div>
-
-                    <p className={`text-4xl font-bold ${(isDark || isHighlighted) ? 'text-white' : 'text-entre-purple-dark'}`}>{formatCurrency(currentPrice)}<span className="text-lg font-normal">/mês</span></p>
-
-                    {/* Placeholder for promo text to ensure alignment */}
-                    <div className="h-5 mt-1 flex items-center justify-center">
                         {promoText && (
-                            <p className={`text-sm font-bold ${((isDark || isHighlighted) ? 'text-entre-purple-light' : 'text-entre-purple-mid')}`}>{promoText}</p>
+                            <span className="ml-2 text-[10px] font-bold uppercase tracking-wider bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                                Promo
+                            </span>
                         )}
                     </div>
+
+                    <div className="flex items-baseline gap-1">
+                        <p className={`text-4xl font-black tracking-tight ${(isDark) ? 'text-white' : 'text-gray-900'}`}>
+                            {formatCurrency(currentPrice).replace(',00', '')}
+                        </p>
+                        <span className={`text-sm font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>/mês</span>
+                    </div>
+                    
+                     {promoText && (
+                        <p className="text-xs text-gray-500 mt-1">{promoText}</p>
+                    )}
                 </div>
             );
         }
@@ -98,77 +122,73 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, isSelected, onSelect, 
     };
 
     return (
-        <button
-            onClick={onSelect}
-            className={`${cardBaseClasses} ${cardColorClasses} ${cardHoverClasses}`}
-        >
+        <button onClick={onSelect} className={`${cardBaseClasses} ${cardStateClasses} ${cardColorClasses}`}>
             {isHighlighted && (
-                <div className="absolute top-0 right-4 -translate-y-1/2 bg-entre-orange text-white text-xs font-bold px-3 py-1 rounded-full shadow-md z-10">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-entre-orange text-white text-[10px] font-black px-3 py-1 rounded-full shadow-md z-10 uppercase tracking-widest">
                     {bestOfferText}
                 </div>
             )}
 
-            <div className="flex-grow flex flex-col">
+            <div className="flex-grow flex flex-col w-full">
 
-                {/* Specific Layout for TV Plans */}
                 {isTvPlan ? (
                     <>
-                        <div className="relative aspect-[260/380] mb-3 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden shadow-inner">
+                        <div className="relative aspect-[260/380] mb-4 bg-gray-100 rounded-xl overflow-hidden shadow-sm group-hover:shadow-md transition-shadow">
                              <img 
                                 src={`/images/${plan.id}.png`} 
                                 alt={`Canais do plano ${plan.name}`} 
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
                                 onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                             />
-                            <div className="absolute bottom-0 left-0 right-0 p-4 pt-12 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
-                                <h3 className="text-xl font-bold text-white text-center" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.6)' }}>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-80" />
+                            <div className="absolute bottom-4 left-0 right-0 px-4 text-center">
+                                <h3 className="text-xl font-black text-white leading-tight">
                                     {plan.name}
                                 </h3>
+                                <p className="text-white/80 text-xs mt-1">{(plan as TvPlan).details}</p>
                             </div>
                         </div>
-                        <div className="mb-3 flex-grow">
-                            <p className={`text-sm ${textColor}`}>{(plan as TvPlan).details}</p>
-                            {hasComboDiscount && (
-                                <p className="text-sm mt-1 font-bold text-green-600">Desconto de combo ativo!</p>
-                            )}
-                        </div>
+                        {hasComboDiscount && (
+                            <div className="bg-green-50 text-green-700 text-xs font-bold px-2 py-1 rounded mb-4 inline-block self-center">
+                                Preço Especial Combo
+                            </div>
+                        )}
                     </>
                 ) : (
-                /* Layout for Internet and other Addons */
                     <>
-                        <h3 className={`text-2xl font-bold mb-2 ${titleColor}`}>{plan.name}</h3>
+                        <h3 className={`text-2xl font-black mb-2 text-left ${titleColor}`}>{plan.name}</h3>
+                        
                         {'description' in plan ? (
-                            <p className={`text-sm mb-4 min-h-[60px] ${textColor}`}>{(plan as InternetPlan).description}</p>
+                            <p className={`text-sm mb-6 text-left leading-relaxed min-h-[40px] ${textColor}`}>{(plan as InternetPlan).description}</p>
                         ) : (
-                            <p className={`text-sm mb-4 min-h-[40px] ${textColor}`}>{(plan as OmniPlan | NoBreakPlan).details}</p>
+                            <p className={`text-sm mb-6 text-left leading-relaxed ${textColor}`}>{(plan as OmniPlan | NoBreakPlan).details}</p>
                         )}
                         
                         {'features' in plan && (
-                            <ul className="text-left space-y-2 text-sm">
+                            <ul className="text-left space-y-3 mb-6">
                                 {(plan as InternetPlan).features.map((feature, index) => (
-                                    <li key={index} className="flex items-center">
+                                    <li key={index} className={`flex items-start text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
                                         <CheckIcon />
-                                        <span>{feature}</span>
+                                        <span className="leading-tight">{formatFeature(feature)}</span>
                                     </li>
                                 ))}
                             </ul>
                         )}
 
-                        <div className="flex-grow">
-                            {'highlight' in plan && plan.highlight && (
-                                <div className={ isHighlighted 
-                                    ? "bg-white/10 text-white font-semibold text-sm rounded-lg p-3 my-4 flex items-center justify-center"
-                                    : "bg-entre-purple-light text-entre-purple-dark font-semibold text-sm rounded-lg p-3 my-4 flex items-center justify-center"
-                                }>
-                                    <span>{plan.highlight}</span>
-                                </div>
-                            )}
-                        </div>
+                        {'highlight' in plan && plan.highlight && (
+                            <div className={`text-xs font-bold rounded-lg p-3 mb-4 flex items-center justify-center text-center leading-tight ${
+                                isHighlighted 
+                                ? "bg-entre-purple-light text-entre-purple-dark border border-entre-purple-mid/20"
+                                : "bg-gray-100 text-gray-600"
+                            }`}>
+                                {plan.highlight}
+                            </div>
+                        )}
                     </>
                 )}
             </div>
             
-            <div className="mt-auto">
+            <div className="mt-auto w-full">
                 {renderPrice()}
                 <div className={`${buttonBaseClasses} ${isSelected ? buttonSelectedClasses : buttonDefaultClasses}`}>
                     {buttonText}

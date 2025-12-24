@@ -1,3 +1,4 @@
+
 // FIX: Correctly import all necessary types from the `types` module.
 import type { InternetPlan, TvPlan, AppInfo, OmniPlan, NoBreakPlan, Profile, PlanType } from '../types';
 
@@ -15,38 +16,33 @@ interface DbData {
 export const PROFILES: Record<PlanType, Profile[]> = {
     casa: [
         {
-            id: 'profile-gamer',
-            name: 'Gamer Pro',
-            description: 'Para quem busca a menor latência e máxima velocidade para dominar nos jogos online.',
-            icon: 'gamer',
-            config: {
-                internetId: 'res-920',
-                appIds: ['app-exitlag'],
-                omniId: 'omni-cabo',
-                nobreakId: 'nobreak',
-            }
-        },
-        {
-            id: 'profile-family',
-            name: 'Família Conectada',
-            description: 'Streaming em 4K, videochamadas e muita diversão para todos em casa, ao mesmo tempo.',
+            id: 'profile-music',
+            name: 'Combo MUSIC',
+            description: 'A trilha sonora perfeita para o seu dia com Deezer Premium.',
             icon: 'family',
             config: {
                 internetId: 'res-800',
-                tvId: 'tv-plus',
-                appIds: ['app-disney-ads', 'app-playkids'],
-                omniId: 'omni-5',
+                appIds: ['app-deezer'],
             }
         },
         {
-            id: 'profile-home-office',
-            name: 'Home Office Pro',
-            description: 'A estabilidade e velocidade que você precisa para trabalhar sem interrupções e com máxima produtividade.',
+            id: 'profile-gamer',
+            name: 'Combo GAMER',
+            description: 'Performance máxima com Exit Lag.',
+            icon: 'gamer',
+            config: {
+                internetId: 'res-800',
+                appIds: ['app-exitlag'],
+            }
+        },
+        {
+            id: 'profile-streaming',
+            name: 'Combo STREAMING',
+            description: 'O melhor do cinema e séries com HBO Max e Disney inclusos.',
             icon: 'home-office',
             config: {
                 internetId: 'res-800',
-                appIds: ['app-kaspersky-1'],
-                nobreakId: 'nobreak',
+                appIds: ['app-hbo-noads', 'app-disney-noads'],
             }
         },
     ],
@@ -164,6 +160,7 @@ export const DB: DbData = {
     ],
     apps: [
         { id: 'app-deezer', name: 'Deezer', tier: 'Standard', category: 'Música', details: 'Streaming de música e podcasts com playlists, rádios e recomendações personalizadas.', price: 20, comboPrice: 15 },
+        { id: 'app-sky-light', name: 'Sky+ Light', tier: 'Standard', category: 'Sky', details: '13 canais abertos ao vivo.', price: 20, comboPrice: 15 },
         { id: 'app-looke', name: 'Looke', tier: 'Standard', category: 'Séries e Filmes', details: 'Streaming brasileiro com filmes, séries e área infantil (Looke Kids).', price: 20, comboPrice: 15 },
         { id: 'app-kiddle-1', name: 'Kiddle Pass 1 usuário', tier: 'Standard', category: 'Infantil', details: 'Plataforma de experiências educacionais ao vivo e em vídeo para crianças até 12 anos.', price: 20, comboPrice: 15 },
         { id: 'app-nutri', name: '+QNutri', tier: 'Standard', category: 'Saúde e Bem estar', details: 'Aplicativo de acompanhamento nutricional e bem‑estar (curadoria e planos alimentares).', price: 20, comboPrice: 15 },
@@ -178,10 +175,12 @@ export const DB: DbData = {
         { id: 'app-socialcomics', name: 'Social Comics', tier: 'Standard', category: 'Educação e Leitura', details: 'Streaming de HQs e quadrinhos digitais com catálogo atualizado diariamente.', price: 20, comboPrice: 15 },
         { id: 'app-revistaria', name: 'Revistaria', tier: 'Standard', category: 'Educação e Leitura', details: 'Banca digital com acesso a revistas brasileiras em formato digital/PDF.', price: 20, comboPrice: 15 },
         { id: 'app-playlist', name: 'Playlist', tier: 'Standard', category: 'Música', details: 'A plataforma oferece mais de 100 playlists de diversos gêneros e estilos musicais, todas elaboradas por profissionais do mercado. Os usuários também podem ouvir a rádio streaming, com músicas, notícias e entrevistas 24 horas por dia', price: 20, comboPrice: 15 },
+        { id: 'app-sky-light-globo', name: 'Sky+ Light (Globo)', tier: 'Advanced', category: 'Sky', details: '14 canais abertos ao vivo incluindo Globo local.', price: 30, comboPrice: 25 },
         { id: 'app-kiddle-2', name: 'Kiddle Pass 2 usuários', tier: 'Advanced', category: 'Infantil', details: 'Plataforma de atividades educacionais e de lazer para crianças, ao vivo e em vídeo.', price: 30, comboPrice: 25 },
         { id: 'app-kaspersky-3', name: 'Kaspersky Standard (3 licenças)', tier: 'Advanced', category: 'Segurança Digital', details: 'Antivírus e proteção essencial com navegação segura e recursos básicos.', price: 30, comboPrice: 25 },
         { id: 'app-curtaon', name: 'Curta ON', tier: 'Advanced', category: 'Séries e Filmes', details: 'Streaming do Canal Curta! com documentários e séries sobre artes e humanidades.', price: 30, comboPrice: 25 },
         { id: 'app-ojornalista', name: 'O Jornalista', tier: 'Advanced', category: 'Educação e Leitura', details: 'App para ler e ouvir jornais, revistas e podcasts de notícias brasileiros.', price: 30, comboPrice: 25 },
+        { id: 'app-sky-light-amazon', name: 'Sky+ Light (Amazon)', tier: 'Top', category: 'Sky', details: '14 canais ao vivo incluindo Globo local e acesso aos benefícios da Amazon: Prime Vídeos, Prime Music e Amazon Prime.', price: 35, comboPrice: 30 },
         { id: 'app-disney-ads', name: 'Disney+ (com anúncio)', tier: 'Top', category: 'Séries e Filmes', details: 'Streaming da Disney com anúncios; catálogo Disney, Pixar, Marvel, Star Wars e NatGeo.', price: 35, comboPrice: 30 },
         { id: 'app-hbo-ads', name: 'HBO Max (com anúncio)', tier: 'Top', category: 'Séries e Filmes', details: 'Plano com anúncios do Max (HBO), com filmes, séries e esportes selecionados.', price: 35, comboPrice: 30 },
         { id: 'app-cindie', name: 'C Indie', tier: 'Top', category: 'Séries e Filmes', details: 'Cindie: streaming de cinema e séries independentes, curadoria internacional.', price: 35, comboPrice: 30 },
@@ -189,10 +188,10 @@ export const DB: DbData = {
         { id: 'app-disney-noads', name: 'Disney+', tier: 'Premium', category: 'Séries e Filmes', details: 'Streaming da Disney sem anúncios em planos elegíveis; filmes e séries Disney, Pixar, Marvel, Star Wars e NatGeo.', price: 40, comboPrice: 35 },
         { id: 'app-hbo-noads', name: 'HBO Max', tier: 'Premium', category: 'Séries e Filmes', details: 'Streaming Max (HBO) com filmes, séries e esportes; opções sem anúncios.', price: 40, comboPrice: 35 },
         { id: 'app-kaspersky-plus', name: 'Kaspersky Plus', tier: 'Premium', category: 'Segurança Digital', details: 'Segurança avançada com antivírus e extras como VPN e monitoramento adicional.', price: 40, comboPrice: 35 },
-        { id: 'app-nba', name: 'NBA League Pass', tier: 'Premium', category: 'Esportes', details: 'Serviço oficial para assistir jogos da NBA ao vivo e on‑demand.', price: 40, comboPrice: 35 },
-        { id: 'app-smartcontent', name: 'Smart Content', tier: 'Premium', category: 'Educação e Leitura', details: 'App de aprendizado rápido com resumos, vídeos e áudios curados sobre inovação e negócios.', price: 40, comboPrice: 35 },
+        { id: 'app-smartcontent', name: 'Smart Content', tier: 'Premium', category: 'Educação e Leitura', details: 'App de aprendizado rápido com resumos, videos e áudios curados sobre inovação e negócios.', price: 40, comboPrice: 35 },
         { id: 'app-queimadiaria', name: 'Queima Diária', tier: 'Premium', category: 'Saúde e Bem estar', details: 'App de treinos em casa focado em queima de gordura abdominal e condicionamento.', price: 40, comboPrice: 35 },
-        { id: 'app-zen', name: 'Zen', tier: 'Premium', category: 'Saúde e Bem estar', details: 'App de meditação e sono com conteúdos para ansiedade, sono e bem‑estar.', price: 40, comboPrice: 35 }
+        { id: 'app-zen', name: 'Zen', tier: 'Premium', category: 'Saúde e Bem estar', details: 'App de meditação e sono com conteúdos para ansiedade, sono e bem‑estar.', price: 40, comboPrice: 35 },
+        { id: 'app-sky-full', name: 'Sky+ Full', tier: 'Sky Full', category: 'Sky', details: '90 canais ao vivo.', price: 89.90, comboPrice: 89.90 }
     ],
     omni: [
         { id: 'omni-cabo', name: 'OMNI CABO', details: 'Ponto adicional cabeado', price: 8.00 },

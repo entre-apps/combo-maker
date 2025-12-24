@@ -1,5 +1,4 @@
 
-
 import React from 'react';
 import type { AppInfo } from '../types';
 
@@ -9,15 +8,21 @@ interface AppCardProps {
     onSelect: () => void;
     appTierCounts: Record<string, number>;
     hasDiscount?: boolean;
+    isFeatured?: boolean;
 }
 
-export const AppCard: React.FC<AppCardProps> = ({ app, isSelected, onSelect, appTierCounts, hasDiscount }) => {
-    const isDisneyApp = app.id.includes('disney');
+export const AppCard: React.FC<AppCardProps> = ({ app, isSelected, onSelect, appTierCounts, hasDiscount, isFeatured }) => {
     const isTierFull = !isSelected && (appTierCounts[app.tier] || 0) >= 3;
-    const isDisabled = isTierFull || (isDisneyApp && !isSelected);
+    const isDisabled = isTierFull;
+    const isDisney = app.id.toLowerCase().includes('disney');
+    
+    // Verifica se o app realmente tem um preço menor no combo
+    const actuallyHasDiscount = hasDiscount && (app.price > app.comboPrice);
 
     const cardClasses = `relative flex flex-col h-full bg-white rounded-xl p-4 border-2 transition-all duration-300 shadow-lg text-left w-full ${
-        isSelected ? 'border-entre-purple-dark ring-4 ring-entre-purple-mid/30' : 'border-transparent'
+        isSelected 
+            ? 'border-entre-purple-dark ring-4 ring-entre-purple-mid/30' 
+            : 'border-transparent'
     } ${
         isDisabled
             ? 'opacity-70 cursor-not-allowed'
@@ -26,7 +31,9 @@ export const AppCard: React.FC<AppCardProps> = ({ app, isSelected, onSelect, app
     
     const buttonText = isSelected ? 'Remover' : 'Adicionar';
     const buttonBaseClasses = 'w-full font-bold py-2 px-4 rounded-lg shadow-md transition-all duration-300 ease-in-out mt-auto text-sm text-center';
+    
     const buttonSelectedClasses = 'bg-white text-red-600 border border-red-500 shadow-sm hover:bg-red-50';
+    
     const buttonDefaultClasses = 'bg-white text-entre-purple-dark border border-entre-purple-mid shadow-sm hover:bg-entre-purple-light';
 
     const slugify = (text: string): string => {
@@ -52,28 +59,32 @@ export const AppCard: React.FC<AppCardProps> = ({ app, isSelected, onSelect, app
             disabled={isDisabled}
             className={cardClasses}
         >
-            {isDisneyApp && !isSelected ? (
-                 <div className="absolute -top-2 -right-2 bg-gray-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md z-10">
-                    Em breve
-                </div>
-            ) : hasDiscount && (
-                 <div className="absolute -top-2 -right-2 bg-entre-orange text-white text-xs font-bold px-2 py-1 rounded-full shadow-md z-10">
-                    Desconto!
+            {isDisney && (
+                <div className="absolute -top-2 -left-2 bg-entre-purple-dark text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm z-10 uppercase tracking-tighter">
+                    Stream Disney+
                 </div>
             )}
+            
+            {(actuallyHasDiscount || (isDisney && app.tier === 'Premium')) && (
+                 <div className="absolute -top-2 -right-2 bg-entre-orange text-white text-xs font-bold px-2 py-1 rounded-full shadow-md z-10">
+                    {isDisney && app.tier === 'Premium' ? 'Recomendado' : 'Desconto!'}
+                </div>
+            )}
+
             <div className="flex-grow mb-4">
                 <div className="flex justify-between items-center gap-4 mb-3">
-                     <h3 className="text-lg font-bold text-entre-purple-mid">{app.name}</h3>
-                     <div className="w-20 h-20 flex-shrink-0 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                     <h3 className="text-lg font-bold text-entre-purple-mid">
+                        {app.name}
+                     </h3>
+                     <div className={`w-16 h-16 flex-shrink-0 rounded-lg flex items-center justify-center overflow-hidden ${isDisney ? 'bg-entre-purple-dark' : 'bg-gray-100'}`}>
                         <img 
                             src={logoUrl} 
                             alt={`Logo ${app.name}`} 
-                            className="w-full h-full object-contain"
+                            className="w-full h-full object-contain p-1"
                             onError={(e) => {
                                 const target = e.target as HTMLImageElement;
-                                target.style.display = 'none'; // Hide broken image icon
+                                target.style.display = 'none';
                                 const parent = target.parentElement;
-                                // Add a placeholder icon if the image fails
                                 if(parent) {
                                      parent.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>`;
                                 }
@@ -81,13 +92,16 @@ export const AppCard: React.FC<AppCardProps> = ({ app, isSelected, onSelect, app
                         />
                      </div>
                 </div>
-                <p className="text-sm text-gray-600">{app.details}</p>
+                <p className="text-sm text-gray-600 leading-tight">{app.details}</p>
+                <div className="mt-2 flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{app.tier}</span>
+                </div>
             </div>
             
             <div
                 className={`${buttonBaseClasses} ${isSelected ? buttonSelectedClasses : buttonDefaultClasses} ${isDisabled ? 'opacity-50' : ''}`}
             >
-                {isTierFull ? 'Limite atingido' : (isDisneyApp && !isSelected) ? 'Em Breve' : buttonText}
+                {isTierFull ? 'Limite atingido' : buttonText}
             </div>
         </button>
     );

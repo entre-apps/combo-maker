@@ -8,7 +8,8 @@ import { AppSection } from './components/AppSection';
 import { OmniExplanation } from './components/OmniExplanation';
 import { NoBreakExplanation } from './components/NoBreakExplanation';
 import { Summary } from './components/Summary';
-import { FloatingCart } from './components/FloatingCart';
+import { StickySidebar } from './components/StickySidebar';
+import { MobileBottomBar } from './components/MobileBottomBar';
 import { DB } from './data/products';
 import type { PlanType, CartState, InternetPlan, TvPlan, AppInfo, OmniPlan, NoBreakPlan, Profile } from './types';
 import { formatCurrency } from './utils/formatters';
@@ -26,14 +27,21 @@ const App: React.FC = () => {
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [selectedProfileId, setSelectedProfileId] = useState<string | null>(null);
 
-    const sectionsRef = {
-        internet: useRef<HTMLDivElement>(null),
-        tv: useRef<HTMLDivElement>(null),
-        apps: useRef<HTMLDivElement>(null),
-        omni: useRef<HTMLDivElement>(null),
-        nobreak: useRef<HTMLDivElement>(null),
-        profileSelector: useRef<HTMLDivElement>(null),
-    };
+    const internetRef = useRef<HTMLDivElement>(null);
+    const tvRef = useRef<HTMLDivElement>(null);
+    const appsRef = useRef<HTMLDivElement>(null);
+    const omniRef = useRef<HTMLDivElement>(null);
+    const nobreakRef = useRef<HTMLDivElement>(null);
+    const profileSelectorRef = useRef<HTMLDivElement>(null);
+
+    const sectionsRef = useMemo(() => ({
+        internet: internetRef,
+        tv: tvRef,
+        apps: appsRef,
+        omni: omniRef,
+        nobreak: nobreakRef,
+        profileSelector: profileSelectorRef,
+    }), []);
 
     const handleScrollTo = useCallback((ref: React.RefObject<HTMLElement>) => {
         const headerOffset = 80;
@@ -62,32 +70,28 @@ const App: React.FC = () => {
             ...resetCartAddons(),
             internet: null,
         });
-        setTimeout(() => handleScrollTo(sectionsRef.internet), 100);
-    }, [handleScrollTo, sectionsRef]);
+        // Removido auto-scroll para UX mais suave (controle do usuário)
+    }, []);
 
     const handleSelectInternet = useCallback((plan: InternetPlan) => {
         setSelectedProfileId(null);
         setCart(prev => ({
             ...prev,
             internet: plan,
-            ...resetCartAddons(), // Reset addons when internet plan changes
+            // Mantemos addons se o usuário estiver apenas trocando a velocidade
+            // ...resetCartAddons(), 
         }));
-        setTimeout(() => handleScrollTo(sectionsRef.omni), 100);
-    }, [handleScrollTo, sectionsRef]);
+    }, []);
 
     const handleSelectTv = useCallback((plan: TvPlan) => {
         setSelectedProfileId(null);
         setCart(prev => {
-            const isAdding = !prev.tv || prev.tv.id !== plan.id;
-            if (isAdding) {
-                setTimeout(() => handleScrollTo(sectionsRef.apps), 100);
-            }
             return {
                 ...prev,
                 tv: prev.tv?.id === plan.id ? null : plan,
             };
         });
-    }, [handleScrollTo, sectionsRef]);
+    }, []);
     
     const handleSelectApp = useCallback((app: AppInfo) => {
         setSelectedProfileId(null);
@@ -114,30 +118,22 @@ const App: React.FC = () => {
     const handleSelectOmni = useCallback((plan: OmniPlan) => {
         setSelectedProfileId(null);
         setCart(prev => {
-            const isAdding = !prev.omni || prev.omni.id !== plan.id;
-            if (isAdding) {
-                setTimeout(() => handleScrollTo(sectionsRef.nobreak), 100);
-            }
             return {
                 ...prev,
                 omni: prev.omni?.id === plan.id ? null : plan,
             };
         });
-    }, [handleScrollTo, sectionsRef]);
+    }, []);
 
     const handleSelectNobreak = useCallback((plan: NoBreakPlan) => {
         setSelectedProfileId(null);
         setCart(prev => {
-            const isAdding = !prev.nobreak;
-            if (isAdding) {
-                setTimeout(() => handleScrollTo(sectionsRef.tv), 100);
-            }
             return {
                 ...prev,
                 nobreak: prev.nobreak ? null : plan,
             };
         });
-    }, [handleScrollTo, sectionsRef]);
+    }, []);
     
     const handleSelectProfile = useCallback((profile: Profile) => {
         setSelectedProfileId(profile.id);
@@ -157,14 +153,12 @@ const App: React.FC = () => {
 
         setCart(newCart);
 
+        // Scroll suave apenas para confirmar a seleção do perfil e mostrar o resultado
         setTimeout(() => {
-            window.scrollTo({
-                top: document.body.scrollHeight,
-                behavior: 'smooth'
-            });
-        }, 200);
+            if (internetRef.current) handleScrollTo(internetRef);
+        }, 100);
 
-    }, [cart.planType]);
+    }, [cart.planType, handleScrollTo]);
 
     const handleClearCart = useCallback(() => {
         setCart({
@@ -177,7 +171,42 @@ const App: React.FC = () => {
         });
         setSelectedProfileId(null);
         setIsCartOpen(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
+
+    const handleRemoveItem = useCallback((type: string, id?: string) => {
+        setCart(prev => {
+            const newCart = { ...prev };
+            
+            if (type === 'tv') {
+                newCart.tv = null;
+            } else if (type === 'omni') {
+                newCart.omni = null;
+            } else if (type === 'nobreak') {
+                newCart.nobreak = null;
+            } else if (type === 'app' && id) {
+                newCart.apps = prev.apps.filter(app => app.id !== id);
+            }
+            
+            // Se removermos itens do perfil selecionado, desmarcamos o perfil
+            setSelectedProfileId(null);
+            
+            return newCart;
+        });
+    }, []);
+
+    const handleContinue = useCallback(() => {
+        if (!cart.internet) return;
+
+        // Lógica de navegação:
+        // Se tem desconto de combo (plano premium), vai para a seleção de perfis/combo.
+        // Se NÃO tem desconto de combo (plano básico), pula direto para o NoBreak (ignorando perfis e omni).
+        if (cart.internet.comboDiscount) {
+            handleScrollTo(sectionsRef.profileSelector);
+        } else {
+            handleScrollTo(sectionsRef.nobreak);
+        }
+    }, [cart.internet, handleScrollTo, sectionsRef]);
 
     const appTierCounts = useMemo(() => {
         return cart.apps.reduce((acc, app) => {
@@ -186,21 +215,26 @@ const App: React.FC = () => {
         }, {} as Record<string, number>);
     }, [cart.apps]);
 
-    const { total, summaryItems, whatsAppMessage, comboDiscountInfo } = useMemo(() => {
-        if (!cart.internet) return { total: { promo: 0, full: 0 }, summaryItems: [], whatsAppMessage: '', comboDiscountInfo: { isActive: false, amount: 0, percentage: 0 } };
+    const { total, summaryItems, whatsAppMessage, comboDiscountInfo, totalPromoText } = useMemo(() => {
+        if (!cart.internet) return { total: { promo: 0, full: 0 }, summaryItems: [], whatsAppMessage: '', comboDiscountInfo: { isActive: false, amount: 0, percentage: 0 }, totalPromoText: undefined };
 
         let promoTotal = 0;
         let fullTotal = 0;
-        const items: { name: string; details?: string; price: number; promoPrice?: number; priceNote?: string; promo?: string; }[] = [];
+        const items: { id: string; type: string; name: string; details?: string; price: number; promoPrice?: number; priceNote?: string; promo?: string; }[] = [];
         let message = `Olá Entre! Tenho interesse em contratar o seguinte pedido:\n\n`;
         
         const hasComboDiscount = cart.internet.comboDiscount ?? false;
         const isPromoPlan = cart.internet.promo && cart.internet.fullPrice;
+        
+        // Define o texto promocional se o plano de internet for promocional
+        const totalPromoText = isPromoPlan ? cart.internet.promo : undefined;
 
         if (isPromoPlan) {
             promoTotal += cart.internet.price;
             fullTotal += cart.internet.fullPrice!;
             const internetItem = {
+                id: cart.internet.id,
+                type: 'internet',
                 name: `${cart.internet.name} (${cart.planType})`,
                 price: cart.internet.fullPrice!,
                 promoPrice: cart.internet.price,
@@ -212,6 +246,8 @@ const App: React.FC = () => {
              promoTotal += cart.internet.price;
              fullTotal += cart.internet.price;
              items.push({
+                id: cart.internet.id,
+                type: 'internet',
                 name: `${cart.internet.name} (${cart.planType})`,
                 price: cart.internet.price,
              });
@@ -227,20 +263,33 @@ const App: React.FC = () => {
             fullTotal += price;
             addonsFullPrice += cart.tv.price;
             addonsPromoPrice += price;
-            items.push({ name: `TV: ${cart.tv.name}`, details: cart.tv.details, price: price });
+            items.push({ 
+                id: cart.tv.id,
+                type: 'tv',
+                name: `TV: ${cart.tv.name}`, 
+                details: cart.tv.details, 
+                price: cart.tv.price, 
+                promoPrice: hasComboDiscount ? price : undefined, 
+                promo: hasComboDiscount ? 'Oferta Combo' : undefined 
+            });
             message += `*TV:* ${cart.tv.name}\n`;
         }
 
         if (cart.apps.length > 0) {
             cart.apps.forEach(app => {
-                const price = hasComboDiscount ? app.comboPrice : app.price;
+                const isSkyFull = app.tier === 'Sky Full';
+                const price = (hasComboDiscount && !isSkyFull) ? app.comboPrice : app.price;
                 promoTotal += price;
                 fullTotal += price;
                 addonsFullPrice += app.price;
                 addonsPromoPrice += price;
                 items.push({
+                    id: app.id,
+                    type: 'app',
                     name: `App: ${app.name}`,
-                    price: price,
+                    price: app.price,
+                    promoPrice: (hasComboDiscount && !isSkyFull) ? price : undefined,
+                    promo: (hasComboDiscount && !isSkyFull) ? 'Oferta Combo' : undefined,
                 });
                 message += `*App:* ${app.name}\n`;
             });
@@ -256,14 +305,25 @@ const App: React.FC = () => {
         if (cart.omni) {
             promoTotal += cart.omni.price;
             fullTotal += cart.omni.price;
-            items.push({ name: `Wi-Fi Extra: ${cart.omni.name}`, details: `${cart.omni.details}. Instalação: A partir de R$ 40,00/ponto`, price: cart.omni.price });
+            items.push({ 
+                id: cart.omni.id,
+                type: 'omni',
+                name: `Wi-Fi Extra: ${cart.omni.name}`, 
+                details: `${cart.omni.details}`, 
+                price: cart.omni.price 
+            });
             message += `*Wi-Fi Extra:* ${cart.omni.name} - ${formatCurrency(cart.omni.price)}\n`;
         }
 
         if (cart.nobreak) {
             promoTotal += cart.nobreak.price;
             fullTotal += cart.nobreak.price;
-            items.push({ name: `Proteção: ${cart.nobreak.name}`, price: cart.nobreak.price });
+            items.push({ 
+                id: cart.nobreak.id,
+                type: 'nobreak',
+                name: `Proteção: ${cart.nobreak.name}`, 
+                price: cart.nobreak.price 
+            });
             message += `*Proteção:* ${cart.nobreak.name} - ${formatCurrency(cart.nobreak.price)}\n`;
         }
 
@@ -281,7 +341,8 @@ const App: React.FC = () => {
                 isActive: hasComboDiscount && addonsDiscountAmount > 0,
                 amount: addonsDiscountAmount,
                 percentage: addonsDiscountPercentage,
-            }
+            },
+            totalPromoText
         };
     }, [cart]);
 
@@ -295,6 +356,12 @@ const App: React.FC = () => {
         </svg>
     );
 
+    const ArrowDownIcon = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 13l-7 7-7-7m14-8l-7 7-7-7" />
+        </svg>
+    );
+
     const noBreakTitle = cart.nobreak ? (
         <span className="flex items-center justify-center">
             Estou protegido
@@ -303,149 +370,201 @@ const App: React.FC = () => {
     ) : "Proteja-se contra falhas de energia";
 
     return (
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen bg-gray-50 pb-20 lg:pb-0">
             <Header />
-            <main className="container mx-auto px-6 py-12 flex-grow">
+            <main className="container mx-auto px-4 md:px-6 py-8 md:py-12 flex-grow">
+                
+                {/* Intro Section - Full Width */}
                 <Section
                     title="Monte seu combo ideal da Entre"
                     subtitle="Siga os passos abaixo para personalizar os serviços da Entre para você."
                     isIntro
                 />
-                
-                <PlanTypeSelector
-                    selectedType={cart.planType}
-                    onSelectType={handleSelectPlanType}
-                />
-                
-                <div ref={sectionsRef.internet}>
-                    {cart.planType && (
-                        <Section
-                            title="Escolha sua Internet Premium"
-                            subtitle={`A melhor conexão para ${cart.planType === 'casa' ? 'sua casa' : 'sua empresa'}.`}
-                            onSecondaryAction={() => handleScrollTo(sectionsRef.profileSelector)}
-                            secondaryActionText="Ver Combos Sugeridos"
-                        >
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                {internetPlans.map(plan => (
-                                    <PlanCard
-                                        key={plan.id}
-                                        plan={plan}
-                                        isSelected={cart.internet?.id === plan.id}
-                                        onSelect={() => handleSelectInternet(plan)}
-                                        planType="internet"
-                                        bestOfferText={cart.planType === 'casa' ? 'Melhor Escolha' : 'Melhor Oferta'}
-                                    />
-                                ))}
-                            </div>
-                        </Section>
-                    )}
-                </div>
 
-                <div ref={sectionsRef.profileSelector}>
-                    {cart.planType && (
-                        <ProfileSelector
-                            planType={cart.planType}
-                            selectedProfileId={selectedProfileId}
-                            onSelectProfile={handleSelectProfile}
+                <div className="lg:grid lg:grid-cols-12 lg:gap-8">
+                    
+                    {/* Left Column - Main Content */}
+                    <div className={`lg:col-span-${showAddons ? '8' : '12'} transition-all duration-500`}>
+                        
+                        <PlanTypeSelector
+                            selectedType={cart.planType}
+                            onSelectType={handleSelectPlanType}
                         />
+
+                        {cart.planType && (
+                            <div className="animate-fade-in-scale">
+                                <div ref={sectionsRef.internet}>
+                                    <Section
+                                        title="1. Escolha sua Internet Premium"
+                                        subtitle={`A melhor conexão para ${cart.planType === 'casa' ? 'sua casa' : 'sua empresa'}.`}
+                                        onSecondaryAction={() => handleScrollTo(sectionsRef.profileSelector)}
+                                        secondaryActionText="Ver Combos Sugeridos"
+                                    >
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
+                                            {internetPlans.map(plan => (
+                                                <PlanCard
+                                                    key={plan.id}
+                                                    plan={plan}
+                                                    isSelected={cart.internet?.id === plan.id}
+                                                    onSelect={() => handleSelectInternet(plan)}
+                                                    planType="internet"
+                                                    bestOfferText={cart.planType === 'casa' ? 'Melhor Escolha' : 'Melhor Oferta'}
+                                                />
+                                            ))}
+                                        </div>
+                                        
+                                        {/* Seta de Continuar com Glow - Substitui o botão anterior */}
+                                        {cart.internet && (
+                                            <div className="mt-8 flex justify-center animate-fade-in-scale">
+                                                <button
+                                                    onClick={handleContinue}
+                                                    className="p-4 rounded-full text-entre-purple-mid hover:text-entre-purple-dark transition-colors duration-300 hover:scale-110 transform cursor-pointer"
+                                                    aria-label="Continuar para a próxima etapa"
+                                                    title="Continuar"
+                                                >
+                                                     <div className="animate-bounce drop-shadow-[0_0_8px_rgba(157,78,221,0.6)]">
+                                                        <ArrowDownIcon />
+                                                     </div>
+                                                </button>
+                                            </div>
+                                        )}
+                                    </Section>
+                                </div>
+
+                                <div ref={sectionsRef.profileSelector}>
+                                    <ProfileSelector
+                                        planType={cart.planType}
+                                        selectedProfileId={selectedProfileId}
+                                        onSelectProfile={handleSelectProfile}
+                                    />
+                                </div>
+                            </div>
+                        )}
+
+                        {showAddons && (
+                            <div className="space-y-12 animate-fade-in-scale">
+                                <div ref={sectionsRef.omni}>
+                                    <Section
+                                        title="2. Expandindo o Wi-Fi (Opcional)"
+                                        subtitle="Leve a máxima conexão para todos os cantos com o OMNI Wi-Fi."
+                                        onSkip={() => handleScrollTo(sectionsRef.nobreak)}
+                                        logoSrc="/images/omni_logo.png"
+                                    >
+                                        <OmniExplanation />
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                                            {DB.omni.map(plan => (
+                                                <PlanCard
+                                                    key={plan.id}
+                                                    plan={plan}
+                                                    isSelected={cart.omni?.id === plan.id}
+                                                    onSelect={() => handleSelectOmni(plan)}
+                                                    planType="addon"
+                                                />
+                                            ))}
+                                        </div>
+                                    </Section>
+                                </div>
+
+                                <div 
+                                    ref={sectionsRef.nobreak} 
+                                    className={`relative -mx-4 md:-mx-6 lg:mx-0 px-4 md:px-6 lg:rounded-3xl transition-colors duration-700 ease-in-out ${isNoBreakSelected ? 'bg-entre-purple-light/50' : 'bg-gray-900'}`} 
+                                    id="section-nobreak"
+                                >
+                                    <div className="absolute top-8 right-8 hidden lg:block opacity-80 pointer-events-none" aria-hidden="true">
+                                        <img src="/images/nobreak_source.png" alt="" className="h-20 w-auto max-w-[200px]" />
+                                    </div>
+                                    <Section
+                                        title={noBreakTitle}
+                                        subtitle="Não fique offline nem quando a luz acabar."
+                                        isDarkSection={!isNoBreakSelected}
+                                        onSkip={() => handleScrollTo(sectionsRef.tv)}
+                                    >
+                                        <NoBreakExplanation isDark={!isNoBreakSelected} />
+                                        <div className="max-w-md mx-auto">
+                                            <PlanCard
+                                                key={DB.nobreak.id}
+                                                plan={DB.nobreak}
+                                                isSelected={isNoBreakSelected}
+                                                onSelect={() => handleSelectNobreak(DB.nobreak)}
+                                                planType="addon"
+                                                isDark={!isNoBreakSelected}
+                                                autoHeight={true}
+                                            />
+                                        </div>
+                                    </Section>
+                                </div>
+                                
+                                <div ref={sectionsRef.tv} className="relative">
+                                    <div className="absolute top-12 right-12 hidden lg:block" aria-hidden="true">
+                                        <img src="/images/watch_logo.png" alt="Logo Watch TV" className="w-[100px] h-[40px]" />
+                                    </div>
+                                    <Section
+                                        title="3. Adicione TV ao vivo"
+                                        subtitle="Turbine seu plano com canais e streaming by Watch."
+                                        onSkip={() => handleScrollTo(sectionsRef.apps)}
+                                    >
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                            {DB.tv.map(plan => (
+                                                <PlanCard
+                                                    key={plan.id}
+                                                    plan={plan}
+                                                    isSelected={cart.tv?.id === plan.id}
+                                                    onSelect={() => handleSelectTv(plan)}
+                                                    planType="addon"
+                                                    hasComboDiscount={cart.internet?.comboDiscount}
+                                                />
+                                            ))}
+                                        </div>
+                                        <p className="text-center mt-8 text-gray-500 text-sm">Assista no celular, tablet, computador e SmarTVs compatíveis</p>
+                                    </Section>
+                                </div>
+                                
+                                <div ref={sectionsRef.apps}>
+                                    <Section
+                                        title="4. Streaming e Apps"
+                                        subtitle="Selecione quantos aplicativos desejar para adicionar ao seu combo."
+                                    >
+                                        <AppSection
+                                            apps={DB.apps}
+                                            selectedApps={cart.apps}
+                                            onSelectApp={handleSelectApp}
+                                            hasComboDiscount={cart.internet?.comboDiscount}
+                                            appTierCounts={appTierCounts}
+                                        />
+                                    </Section>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Right Column - Sticky Sidebar (Desktop Only) */}
+                    {showAddons && (
+                        <div className="hidden lg:block lg:col-span-4 transition-all duration-500 animate-slide-in-right">
+                            <StickySidebar 
+                                summaryItems={summaryItems}
+                                total={total}
+                                whatsAppMessage={whatsAppMessage}
+                                comboDiscountInfo={comboDiscountInfo}
+                                onClearCart={handleClearCart}
+                                onRemoveItem={handleRemoveItem}
+                                totalPromoText={totalPromoText}
+                            />
+                        </div>
                     )}
                 </div>
 
-                {showAddons && (
-                    <div className="space-y-12">
-                        <div ref={sectionsRef.omni}>
-                             <Section
-                                title="Expandindo o Wi-Fi"
-                                subtitle="Leve a máxima conexão para todos os cantos com o OMNI Wi-Fi."
-                                onSkip={() => handleScrollTo(sectionsRef.nobreak)}
-                                logoSrc="/images/omni_logo.png"
-                            >
-                                <OmniExplanation />
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-                                    {DB.omni.map(plan => (
-                                        <PlanCard
-                                            key={plan.id}
-                                            plan={plan}
-                                            isSelected={cart.omni?.id === plan.id}
-                                            onSelect={() => handleSelectOmni(plan)}
-                                            planType="addon"
-                                        />
-                                    ))}
-                                </div>
-                            </Section>
-                        </div>
-
-                        <div 
-                            ref={sectionsRef.nobreak} 
-                            className={`relative pt-12 -mx-6 px-6 transition-colors duration-1000 ease-in-out ${isNoBreakSelected ? 'bg-entre-purple-light' : 'bg-gray-700'}`} 
-                            id="section-nobreak"
-                        >
-                            <div className="absolute top-16 right-12 hidden lg:block" aria-hidden="true">
-                                <img src="/images/nobreak_source.png" alt="Fonte NoBreak" className="h-24" />
-                            </div>
-                            <Section
-                                title={noBreakTitle}
-                                subtitle="Não fique offline nem quando a luz acabar."
-                                isDarkSection={!isNoBreakSelected}
-                                onSkip={() => handleScrollTo(sectionsRef.tv)}
-                            >
-                                <NoBreakExplanation isDark={!isNoBreakSelected} />
-                                <div className="max-w-md mx-auto">
-                                    <PlanCard
-                                        key={DB.nobreak.id}
-                                        plan={DB.nobreak}
-                                        isSelected={isNoBreakSelected}
-                                        onSelect={() => handleSelectNobreak(DB.nobreak)}
-                                        planType="addon"
-                                        isDark={!isNoBreakSelected}
-                                    />
-                                </div>
-                            </Section>
-                        </div>
-                        
-                         <div ref={sectionsRef.tv} className="relative">
-                            <div className="absolute top-12 right-12 hidden lg:block" aria-hidden="true">
-                                <img src="/images/watch_logo.png" alt="Logo Watch TV" className="w-[100px] h-[40px]" />
-                            </div>
-                            <Section
-                                title="Adicione TV ao vivo"
-                                subtitle="Turbine seu plano com canais e streaming by Watch."
-                                onSkip={() => handleScrollTo(sectionsRef.apps)}
-                            >
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                    {DB.tv.map(plan => (
-                                        <PlanCard
-                                            key={plan.id}
-                                            plan={plan}
-                                            isSelected={cart.tv?.id === plan.id}
-                                            onSelect={() => handleSelectTv(plan)}
-                                            planType="addon"
-                                            hasComboDiscount={cart.internet?.comboDiscount}
-                                        />
-                                    ))}
-                                </div>
-                                <p className="text-center mt-8 text-gray-600">Assista no celular, tablet, computador e SmarTVs compatíveis</p>
-                            </Section>
-                        </div>
-                        
-                        <div ref={sectionsRef.apps}>
-                            <Section
-                                title="Streaming e Apps"
-                                subtitle="Selecione quantos aplicativos desejar para adicionar ao seu combo."
-                            >
-                                <AppSection
-                                    apps={DB.apps}
-                                    selectedApps={cart.apps}
-                                    onSelectApp={handleSelectApp}
-                                    hasComboDiscount={cart.internet?.comboDiscount}
-                                    appTierCounts={appTierCounts}
-                                />
-                            </Section>
-                        </div>
-                    </div>
-                )}
             </main>
-            {showAddons && <FloatingCart total={total.promo} onOpenCart={() => setIsCartOpen(true)} />}
+            
+            {/* Mobile Bottom Bar */}
+            {showAddons && (
+                <MobileBottomBar 
+                    total={total.promo} 
+                    itemCount={summaryItems.length}
+                    onViewDetails={() => setIsCartOpen(true)} 
+                />
+            )}
+
+            {/* Mobile Modal for Details */}
             {isCartOpen && (
                 <Summary 
                     summaryItems={summaryItems}
@@ -454,6 +573,8 @@ const App: React.FC = () => {
                     onClose={() => setIsCartOpen(false)}
                     onClearCart={handleClearCart}
                     comboDiscountInfo={comboDiscountInfo}
+                    onRemoveItem={handleRemoveItem}
+                    totalPromoText={totalPromoText}
                 />
             )}
         </div>

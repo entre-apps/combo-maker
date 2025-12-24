@@ -1,3 +1,4 @@
+
 // FIX: Define and export all necessary types for the application.
 
 export type PlanType = 'casa' | 'empresa';
@@ -42,7 +43,7 @@ export interface TvPlan {
 export interface AppInfo {
     id: string;
     name: string;
-    tier: 'Standard' | 'Advanced' | 'Top' | 'Premium';
+    tier: 'Standard' | 'Advanced' | 'Top' | 'Premium' | 'Sky Full';
     category: string;
     details: string;
     price: number;

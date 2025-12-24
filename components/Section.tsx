@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface SkipButtonProps {
@@ -41,6 +42,9 @@ export const Section: React.FC<SectionProps> = ({ title, subtitle, children, isI
     
     const titleColor = isDarkSection ? 'text-white' : 'text-entre-purple-dark';
     const subtitleColor = isDarkSection ? 'text-gray-300' : 'text-gray-600';
+    
+    // Remove borda clara se a seção for escura
+    const borderClass = isDarkSection ? 'border-gray-800' : 'border-gray-200';
 
     if (isIntro) {
         return (
@@ -52,7 +56,7 @@ export const Section: React.FC<SectionProps> = ({ title, subtitle, children, isI
     }
     
     return (
-        <section className="py-12 border-t border-gray-200 relative">
+        <section className={`py-12 border-t ${borderClass} relative`}>
             {logoSrc && (
                 <div className="absolute top-12 right-12 hidden lg:block" aria-hidden="true">
                     <img src={logoSrc} alt="Logo da Seção" className="h-24" />

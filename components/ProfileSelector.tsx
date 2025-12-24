@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { PROFILES } from '../data/products';
 import type { PlanType, Profile } from '../types';
@@ -27,6 +28,7 @@ export const ProfileSelector: React.FC<ProfileSelectorProps> = ({ planType, sele
                     <ProfileCard
                         key={profile.id}
                         profile={profile}
+                        planType={planType}
                         isSelected={selectedProfileId === profile.id}
                         onSelect={() => onSelectProfile(profile)}
                     />
