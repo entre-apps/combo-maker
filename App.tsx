@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { Header } from './components/Header';
 import { PlanTypeSelector } from './components/PlanTypeSelector';
 import { Section } from './components/Section';
@@ -136,17 +136,6 @@ const App: React.FC = () => {
         setNextStepId('omni');
     }, []);
 
-    const handleSelectTv = useCallback((plan: TvPlan) => {
-        setSelectedProfileId(null);
-        setCart(prev => {
-            return {
-                ...prev,
-                tv: prev.tv?.id === plan.id ? null : plan,
-            };
-        });
-        setNextStepId('apps');
-    }, []);
-    
     const handleSelectApp = useCallback((app: AppInfo) => {
         setSelectedProfileId(null);
         setCart(prev => {
