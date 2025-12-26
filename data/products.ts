@@ -57,7 +57,7 @@ export const DB: DbData = {
             { 
                 id: 'res-500', 
                 name: '500 Mega', 
-                description: 'Sob medida para navegação, redes sociais e video chamadas do dia a dia',
+                description: 'Sob medida para navegação, redes sociais e vídeo chamadas',
                 features: ['Instalação Gratuita*', 'Wifi 5', 'Upload 100 Mega'],
                 price: 99.90, 
                 priceDetails: 'R$99,90'
@@ -65,7 +65,7 @@ export const DB: DbData = {
             { 
                 id: 'res-600', 
                 name: '600 Mega', 
-                description: 'Mais velocidade para as atividades do seu dia a dia sem travamentos',
+                description: 'Mais velocidade para as atividades do seu dia a dia',
                 features: ['Instalação Gratuita*', 'Wifi 5', 'Upload 150 Mega'],
                 price: 112.90, 
                 priceDetails: 'R$112,90'
@@ -73,21 +73,20 @@ export const DB: DbData = {
             { 
                 id: 'res-800', 
                 name: '800 Mega', 
-                description: 'Versátil para multiacessos de jogos, home office e streaming em alta qualidade',
+                description: 'Ideal para multiacessos, jogos, trabalho remoto e streaming',
                 features: ['Instalação Gratuita*', 'Wifi 6 (mais estável)', 'Upload 400 Mega'],
                 price: 89.90,
                 fullPrice: 114.90, 
                 priceDetails: 'R$89,90', 
                 originalPrice: 'de: R$114,90', 
-                promo: '*Nos primeiros 3 meses', 
+                promo: '*Nos 3 primeiros meses', 
                 bestOffer: true, 
                 comboDiscount: true 
             },
             { 
                 id: 'res-920', 
                 name: '920 Mega', 
-                description: 'Ampla conectividade para gamers e criadores de conteúdo',
-                highlight: 'Com 2 pontos OMNI WiFi (maior cobertura)',
+                description: 'O mais rápido e com 2 pontos OMNI WiFi (maior cobertura)',
                 features: ['Instalação Gratuita*', 'Wifi 6 (mais estável)', 'Upload 500 Mega'],
                 price: 169.90, 
                 priceDetails: 'R$169,90', 
@@ -96,36 +95,36 @@ export const DB: DbData = {
         ],
         empresa: [
              { 
-                id: 'emp-200', 
-                name: '200 MEGA', 
-                description: 'Ideal para pequenas empresas e escritórios com foco em e-mail e navegação.',
-                features: ['Instalação Gratuita*', 'Wifi 5', 'Upload 100 Mega'],
-                price: 114.90, 
-                priceDetails: 'R$114,90'
-            },
-            { 
-                id: 'emp-500', 
-                name: '500 MEGA', 
-                description: 'Perfeito para empresas que precisam de mais velocidade para transferências de arquivos e reuniões online.',
-                features: ['Instalação Gratuita*', 'Wifi 5', 'Upload 250 Mega'],
-                price: 119.90, 
-                priceDetails: 'R$119,90'
-            },
-            { 
                 id: 'emp-800', 
-                name: '800 MEGA', 
-                description: 'Alta performance para empresas com grande fluxo de dados, multiacessos e uso de sistemas na nuvem.',
-                features: ['Instalação Gratuita*', 'Wifi 6 (mais estável)', 'Upload 400 Mega'],
-                price: 169.90, 
-                priceDetails: 'R$169,90'
+                name: '800 Mega', 
+                description: 'Internet rápida e estável para manter sua empresa sempre conectada.',
+                features: ['Instalação Gratuita*', 'Wifi 6 (mais estável)', 'Upload simétrico'],
+                price: 139.90, 
+                priceDetails: 'R$139,90'
             },
             { 
-                id: 'emp-920', 
-                name: '920 MEGA', 
-                description: 'Conectividade máxima para empresas que demandam altíssima velocidade e estabilidade para operações críticas.',
-                features: ['Instalação Gratuita*', '2 roteadores WIFI 6', 'Upload 500 Mega'],
-                price: 179.90, 
-                priceDetails: 'R$179,90', 
+                id: 'emp-800-gp', 
+                name: '800 Mega + Gerência Proativa', 
+                description: 'Conectividade inteligente com monitoramento ativo na sua operação.',
+                features: ['Instalação Gratuita*', 'Wifi 6 (mais estável)', 'Upload simétrico', 'Gerência Proativa¹'],
+                price: 219.90, 
+                priceDetails: 'R$219,90'
+            },
+            { 
+                id: 'emp-800-gp-ip', 
+                name: '800 Mega + Gerência Proativa + IP Fixo', 
+                description: 'Mais controle, segurança e estabilidade para sistemas e aplicações críticas.',
+                features: ['Instalação Gratuita*', 'Wifi 6 (mais estável)', 'Upload simétrico', 'Gerência Proativa¹', 'IP Fixo²'],
+                price: 269.90, 
+                priceDetails: 'R$269,90'
+            },
+            { 
+                id: 'emp-920-full', 
+                name: '920 Mega + Gerência Proativa + IP Fixo', 
+                description: 'A solução mais completa para máxima performance e conectividade total.',
+                features: ['Instalação Gratuita*', '2 pontos Wifi 6 (mais estável)', 'Upload simétrico', 'Gerência Proativa¹', 'IP Fixo²'],
+                price: 319.90, 
+                priceDetails: 'R$319,90', 
                 bestOffer: true 
             }
         ]
@@ -160,11 +159,11 @@ export const DB: DbData = {
         { id: 'app-ojornalista', name: 'O Jornalista', tier: 'Advanced', category: 'Educação e Leitura', details: 'App para ler e ouvir jornais, revistas e podcasts de notícias brasileiros.', price: 30, comboPrice: 25 },
         { id: 'app-sky-light-amazon', name: 'Sky+ Light (Amazon)', tier: 'Top', category: 'Sky', details: '14 canais ao vivo incluindo Globo local e acesso aos benefícios da Amazon: Prime Vídeos, Prime Music e Amazon Prime.', price: 35, comboPrice: 30 },
         { id: 'app-disney-ads', name: 'Disney+ (com anúncio)', tier: 'Top', category: 'Séries e Filmes', details: 'Streaming da Disney com anúncios; catálogo Disney, Pixar, Marvel, Star Wars e NatGeo.', price: 35, comboPrice: 30 },
-        { id: 'app-hbo-ads', name: 'HBO Max (com anúncio)', tier: 'Top', category: 'Séries e Filmes', details: 'Plano com anúncios do Max (HBO), com filmes, séries e esportes selecionados.', price: 35, comboPrice: 30 },
+        { id: 'app-hbo-ads', name: 'HBO Max (com anúncio)', tier: 'Top', category: 'Séries e Filmes', details: 'Todo conteúdo da HBO, Universo DC, Harry Potter e outras histórias imperdíveis, além de esportes ao vivo (com anúncios)', price: 35, comboPrice: 30 },
         { id: 'app-cindie', name: 'C Indie', tier: 'Top', category: 'Séries e Filmes', details: 'Cindie: streaming de cinema e séries independentes, curadoria internacional.', price: 35, comboPrice: 30 },
         { id: 'app-leitura360', name: 'Leitura 360', tier: 'Top', category: 'Educação e Leitura', details: 'Plataforma de leitura multimídia com audiolivros e revistas', price: 35, comboPrice: 30 },
         { id: 'app-disney-noads', name: 'Disney+', tier: 'Premium', category: 'Séries e Filmes', details: 'Streaming da Disney sem anúncios em planos elegíveis; filmes e séries Disney, Pixar, Marvel, Star Wars e NatGeo.', price: 40, comboPrice: 35 },
-        { id: 'app-hbo-noads', name: 'HBO Max', tier: 'Premium', category: 'Séries e Filmes', details: 'Streaming Max (HBO) com filmes, séries e esportes; opções sem anúncios.', price: 40, comboPrice: 35 },
+        { id: 'app-hbo-noads', name: 'HBO Max', tier: 'Premium', category: 'Séries e Filmes', details: 'Todo conteúdo da HBO, Universo DC, Harry Potter e outras histórias imperdíveis, além de esportes ao vivo (sem anúncios)', price: 40, comboPrice: 35 },
         { id: 'app-kaspersky-plus', name: 'Kaspersky Plus', tier: 'Premium', category: 'Segurança Digital', details: 'Segurança avançada com antivírus e extras como VPN e monitoramento adicional.', price: 40, comboPrice: 35 },
         { id: 'app-smartcontent', name: 'Smart Content', tier: 'Premium', category: 'Educação e Leitura', details: 'App de aprendizado rápido com resumos, videos e áudios curados sobre inovação e negócios.', price: 40, comboPrice: 35 },
         { id: 'app-queimadiaria', name: 'Queima Diária', tier: 'Premium', category: 'Saúde e Bem estar', details: 'App de treinos em casa focado em queima de gordura abdominal e condicionamento.', price: 40, comboPrice: 35 },

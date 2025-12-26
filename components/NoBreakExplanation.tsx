@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface NoBreakExplanationProps {
@@ -12,7 +13,7 @@ export const NoBreakExplanation: React.FC<NoBreakExplanationProps> = ({ isDark }
         <div className="max-w-3xl mx-auto mb-8 text-center">
             <h3 className={`text-xl font-bold ${titleColor} mb-2`}>Como funciona o Mini NoBreak?</h3>
             <p className={`${textColor} mb-4`}>
-                O Mini NoBreak é um dispositivo que fica conectado ao seu roteador. Se a energia cair, ele assume automaticamente, mantendo sua internet funcionando por horas! Ideal para home office, estudos e para não perder sua série favorita.
+                O Mini NoBreak é um dispositivo que fica conectado ao seu roteador. Se a energia cair, ele assume automaticamente, mantendo sua internet funcionando por até 4 horas! Ideal para regiões que sofrem com falhas de energia.
             </p>
         </div>
     );

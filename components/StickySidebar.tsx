@@ -34,12 +34,12 @@ export const StickySidebar: React.FC<StickySidebarProps> = ({ summaryItems, tota
     const isDisabled = summaryItems.length === 0;
 
     return (
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden sticky top-24">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
             <div className="bg-entre-purple-dark p-4 text-white text-center">
                 <h3 className="font-bold text-lg uppercase tracking-wide">Seu Pacote Personalizado</h3>
             </div>
             
-            <div className="p-6 flex flex-col max-h-[calc(100vh-180px)] overflow-y-auto custom-scrollbar">
+            <div className="p-6 flex flex-col max-h-[calc(100vh-260px)] overflow-y-auto custom-scrollbar">
                 {/* Lista de Itens */}
                 <div className="space-y-4 mb-6 flex-grow">
                     {summaryItems.length > 0 ? (

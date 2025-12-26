@@ -79,11 +79,7 @@ export const AppCard: React.FC<AppCardProps> = ({ app, isSelected, onSelect, app
             disabled={isDisabled}
             className={cardClasses}
         >
-            {isDisney && (
-                <div className="absolute -top-2 -left-2 bg-entre-purple-dark text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm z-10 uppercase tracking-tighter">
-                    Stream Disney+
-                </div>
-            )}
+            {/* Tag "Stream Disney" removida conforme solicitado */}
             
             {(actuallyHasDiscount || (isDisney && app.tier === 'Premium')) && (
                  <div className="absolute -top-2 -right-2 bg-entre-orange text-white text-xs font-bold px-2 py-1 rounded-full shadow-md z-10">

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-br" class="scroll-smooth">
 <head>
@@ -12,20 +13,25 @@
                 theme: {
                     extend: {
                         fontFamily: {
-                            sans: ['Uncut Sans', 'Inter', 'sans-serif'],
+                            sans: ['Inter', 'sans-serif'],
                         },
                         colors: {
                             'entre-purple-dark': '#5A189A',
                             'entre-purple-mid': '#9D4EDD',
                             'entre-purple-light': '#F3E6FF',
                             'entre-orange': '#FF9000',
+                        },
+                        animation: {
+                            'spin-slow': 'spin 3s linear infinite',
                         }
                     }
                 }
             }
         }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Uncut+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
 <style>
     @keyframes fadeInScale {
         from {
@@ -39,6 +45,48 @@
     }
     .animate-fade-in-scale {
         animation: fadeInScale 0.3s ease-out forwards;
+    }
+    
+    /* Animação para a borda giratória do botão */
+    @property --angle {
+        syntax: "<angle>";
+        initial-value: 0deg;
+        inherits: false;
+    }
+    
+    @keyframes rotate-border {
+        to {
+            --angle: 360deg;
+        }
+    }
+    
+    .rotating-border-container {
+        position: relative;
+        z-index: 0;
+        overflow: hidden;
+    }
+    
+    .rotating-border-container::before {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        inset: -2px; /* Espessura da borda */
+        background: conic-gradient(from var(--angle), #9D4EDD, #FF9000, #9D4EDD);
+        animation: rotate-border 3s linear infinite;
+        border-radius: inherit;
+    }
+    
+    /* Fallback para navegadores que não suportam @property (usa spin padrão) */
+    .rotating-border-fallback::before {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: conic-gradient(transparent, #9D4EDD, #FF9000);
+        animation: spin 3s linear infinite;
     }
 </style>
 <script type="importmap">

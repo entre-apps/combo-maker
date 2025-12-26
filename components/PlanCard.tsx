@@ -65,12 +65,23 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, isSelected, onSelect, 
 
     // Helper to bold specific keywords
     const formatFeature = (text: string) => {
-        const keywords = ['Wifi 6', 'Upload', 'Instalação Gratuita', 'roteadores'];
+        // Adicionados termos empresariais (Gerência Proativa, IP Fixo, OMNI)
+        const keywords = [
+            'Wifi 6', 
+            'Instalação Gratuita', 
+            'roteadores', 
+            '\\(mais estável\\)',
+            'Gerência Proativa',
+            'IP Fixo',
+            'OMNI',
+            'fibra óptica'
+        ];
         const parts = text.split(new RegExp(`(${keywords.join('|')})`, 'gi'));
         return (
             <span>
                 {parts.map((part, i) => 
-                    keywords.some(k => k.toLowerCase() === part.toLowerCase()) 
+                    // Compara removendo as barras invertidas do keyword (usadas para regex)
+                    keywords.some(k => k.replace(/\\/g, '').toLowerCase() === part.toLowerCase()) 
                         ? <strong key={i} className={isDark ? "text-entre-purple-light" : "text-entre-purple-dark"}>{part}</strong> 
                         : part
                 )}
