@@ -30,7 +30,7 @@ const TrashIcon = ({ className }: { className?: string }) => (
 );
 
 
-export const Summary: React.FC<SummaryProps> = ({ summaryItems, total, whatsAppMessage, onClose, onClearCart, onRemoveItem, comboDiscountInfo, totalPromoText }) => {
+export const Summary: React.FC<SummaryProps> = ({ summaryItems, total, whatsAppMessage, onClose, onClearCart, onRemoveItem, comboDiscountInfo }) => {
 
     const handleWhatsAppClick = () => {
         const phoneNumber = '5522974001553'; // Replace with the actual phone number
