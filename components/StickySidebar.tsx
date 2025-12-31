@@ -22,7 +22,7 @@ const TrashIcon = ({ className }: { className?: string }) => (
     </svg>
 );
 
-export const StickySidebar: React.FC<StickySidebarProps> = ({ summaryItems, total, whatsAppMessage, comboDiscountInfo, onClearCart, onRemoveItem, totalPromoText }) => {
+export const StickySidebar: React.FC<StickySidebarProps> = ({ summaryItems, total, whatsAppMessage, comboDiscountInfo, onClearCart, onRemoveItem }) => {
     
     const handleWhatsAppClick = () => {
         const phoneNumber = '5522974001553';
