@@ -13,7 +13,7 @@ import { MobileBottomBar } from './components/MobileBottomBar';
 import { NextStepButton } from './components/NextStepButton';
 import { StepsProgressBar } from './components/StepsProgressBar'; // Importação do novo componente
 import { DB, PROFILES } from './data/products';
-import type { PlanType, CartState, InternetPlan, TvPlan, AppInfo, OmniPlan, NoBreakPlan, Profile } from './types';
+import type { PlanType, CartState, InternetPlan, AppInfo, OmniPlan, NoBreakPlan, Profile } from './types';
 import { formatCurrency } from './utils/formatters';
 import { ProfileSelector } from './components/ProfileSelector';
 
