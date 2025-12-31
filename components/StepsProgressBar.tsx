@@ -25,7 +25,7 @@ export const StepsProgressBar: React.FC<StepsProgressBarProps> = ({ planType }) 
                 <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-100 -translate-y-1/2 rounded-full z-0" />
                 
                 <div className="relative z-10 flex justify-between items-start w-full">
-                    {steps.map((step, index) => {
+                    {steps.map((step) => {
                         // Lógica de cores
                         const circleColor = step.active 
                             ? 'bg-entre-purple-mid text-white ring-4 ring-entre-purple-light' 
