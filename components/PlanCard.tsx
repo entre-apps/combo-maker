@@ -94,23 +94,13 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, isSelected, onSelect, 
         
         if ('price' in plan) {
             let currentPrice = plan.price;
-            let originalPrice: number | undefined;
             const promoText = 'promo' in plan ? plan.promo : undefined;
-
-            if ('fullPrice' in plan && plan.fullPrice) {
-                 originalPrice = plan.fullPrice;
-            }
             
             return (
                 <div className="mt-2 mb-4">
                     <div className="h-5 flex items-center">
-                        {originalPrice && (
-                            <span className={`text-xs line-through ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-                                {formatCurrency(originalPrice)}
-                            </span>
-                        )}
                         {promoText && (
-                            <span className="ml-2 text-[9px] font-bold uppercase tracking-wider bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                            <span className="text-[9px] font-bold uppercase tracking-wider bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
                                 Promo
                             </span>
                         )}
@@ -118,14 +108,18 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, isSelected, onSelect, 
 
                     <div className="flex items-baseline gap-1">
                         <p className={`text-3xl font-black tracking-tight ${(isDark) ? 'text-white' : 'text-gray-900'}`}>
-                            {formatCurrency(currentPrice).replace(',00', '')}
+                            {formatCurrency(currentPrice)}{promoText ? '*' : ''}
                         </p>
-                        <span className={`text-xs font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>/mês</span>
+                        <span className={`text-xs font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                            /mês
+                        </span>
                     </div>
                     
-                     {promoText && (
-                        <p className="text-[10px] text-gray-500 mt-0.5">{promoText}</p>
-                    )}
+                    <div className="min-h-[1.25rem]">
+                        {promoText && (
+                            <p className="text-[10px] text-gray-500 mt-0.5 leading-tight">{promoText}</p>
+                        )}
+                    </div>
                 </div>
             );
         }
@@ -140,7 +134,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, isSelected, onSelect, 
                 </div>
             )}
 
-            <div className="flex-grow flex flex-col w-full">
+            <div className="flex-grow flex flex-col w-full text-left">
 
                 {isTvPlan ? (
                     <>
@@ -167,10 +161,10 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, isSelected, onSelect, 
                     </>
                 ) : (
                     <>
-                        <h3 className={`text-xl font-black mb-1 text-left ${titleColor}`}>{plan.name}</h3>
+                        <h3 className={`text-xl font-black mb-1 text-left min-h-[4rem] flex items-center ${titleColor}`}>{plan.name}</h3>
                         
                         {'description' in plan ? (
-                            <p className={`text-xs mb-4 text-left leading-relaxed min-h-[32px] ${textColor}`}>{(plan as InternetPlan).description}</p>
+                            <p className={`text-xs mb-4 text-left leading-relaxed min-h-[48px] ${textColor}`}>{(plan as InternetPlan).description}</p>
                         ) : (
                             <p className={`text-xs mb-4 text-left leading-relaxed ${textColor}`}>{(plan as OmniPlan | NoBreakPlan).details}</p>
                         )}

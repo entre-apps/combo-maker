@@ -33,11 +33,15 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ profile, planType, isS
     const prices = useMemo(() => {
         // Preços fixos manuais para perfis específicos (fallback)
         if (planType === 'casa') {
-            if (profile.id === 'profile-music') return { current: 104.90, full: 129.90 };
-            if (profile.id === 'profile-gamer') return { current: 112.90, full: 137.90 };
-            // Para streaming, calculamos dinamicamente abaixo, então removemos o return fixo se quisermos lógica dinâmica
-            // Mas mantemos a lógica manual se não for streaming ou se quiser manter hardcoded
-            if (profile.id === 'profile-streaming' && !isStreamingProfile) return { current: 124.90, full: 149.90 }; 
+            // Combo Music: 89.90 (Internet) + 10.00 (Deezer Standard) = 99.90
+            // Valor fixo permanente
+            if (profile.id === 'profile-music') return { current: 99.90, full: 124.90 }; // Full price apenas para ancora
+            
+            // Combo Gamer: 89.90 (Internet) + 10.00 (ExitLag Standard) + 8.00 (Omni Cabo) = 107.90
+            if (profile.id === 'profile-gamer') return { current: 107.90, full: 132.90 };
+            
+            // Combo Streaming: 89.90 (Internet) + 30.00 (HBO/Disney Premium) = 119.90
+            if (profile.id === 'profile-streaming' && !isStreamingProfile) return { current: 119.90, full: 144.90 }; 
         }
 
         const internet = DB.internet[planType].find(p => p.id === profile.config.internetId);
@@ -226,17 +230,9 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ profile, planType, isS
                         <div className="relative inline-block">
                             <p className="text-4xl font-black leading-none tracking-tighter">
                                 {formatCurrency(prices.current).split(',')[0]}<span className="text-xl">,{formatCurrency(prices.current).split(',')[1]}</span>
-                                <span className="text-base font-bold ml-1">/mês*</span>
+                                <span className="text-base font-bold ml-1">/mês</span>
                             </p>
                         </div>
-                        <div className="mt-1.5 bg-white/10 px-3 py-1 rounded-full inline-block mb-1">
-                            <p className="text-[9px] font-black uppercase tracking-tighter text-entre-purple-light">
-                                *Nos 3 primeiros meses
-                            </p>
-                        </div>
-                        <p className="text-xs font-bold text-white/80">
-                            Após, {formatCurrency(prices.full)}
-                        </p>
                     </div>
 
                     <button 

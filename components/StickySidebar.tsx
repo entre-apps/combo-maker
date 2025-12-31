@@ -53,8 +53,8 @@ export const StickySidebar: React.FC<StickySidebarProps> = ({ summaryItems, tota
                                 <div className="text-right whitespace-nowrap pl-2 flex flex-col items-end">
                                     {item.promoPrice ? (
                                         <>
-                                             <p className="text-xs text-gray-400 line-through">{formatCurrency(item.price)}</p>
                                              <p className="font-bold text-entre-purple-mid">{formatCurrency(item.promoPrice)}</p>
+                                             <p className="text-[10px] text-gray-500">Após 3 meses: {formatCurrency(item.price)}</p>
                                         </>
                                     ) : (
                                         <p className="font-bold text-gray-700">{formatCurrency(item.price)}</p>
@@ -93,19 +93,25 @@ export const StickySidebar: React.FC<StickySidebarProps> = ({ summaryItems, tota
 
                 {/* Total e Ações */}
                 <div className="border-t border-dashed border-gray-200 pt-4 mt-auto">
-                    <div className="flex justify-between items-end mb-1">
-                        <span className="text-sm font-medium text-gray-500">Total Mensal</span>
-                        <span className="text-3xl font-black text-entre-purple-dark">{formatCurrency(total.promo)}</span>
-                    </div>
-                    {total.promo !== total.full && (
-                        <div className="text-right mb-4">
-                            <span className="text-xs text-gray-400 line-through mr-2">{formatCurrency(total.full)}</span>
-                            <span className="text-xs font-bold text-entre-orange">Preço Promocional</span>
-                            {totalPromoText && (
-                                <p className="text-[10px] text-gray-500 font-medium mt-1">{totalPromoText}</p>
-                            )}
+                    <div className="flex flex-col items-end gap-1 mb-6">
+                        {/* Total Mensal */}
+                        <div className="flex justify-between w-full items-baseline">
+                            <span className="text-sm font-bold text-gray-500 uppercase tracking-tight">Total Mensal</span>
+                            <span className="text-2xl font-black text-entre-purple-dark leading-none">
+                                {formatCurrency(total.full)}
+                            </span>
                         </div>
-                    )}
+                        
+                        {/* Promoção 3 meses - Mesmo tamanho de fonte do valor acima */}
+                        {total.promo !== total.full && (
+                            <div className="flex justify-between w-full items-baseline mt-2">
+                                <span className="text-xs font-bold text-green-600 uppercase tracking-tight">Nos 3 primeiros meses:</span>
+                                <span className="text-2xl font-black text-green-600 leading-none">
+                                    {formatCurrency(total.promo)}
+                                </span>
+                            </div>
+                        )}
+                    </div>
 
                     <button
                         onClick={handleWhatsAppClick}

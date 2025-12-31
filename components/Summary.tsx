@@ -56,7 +56,7 @@ export const Summary: React.FC<SummaryProps> = ({ summaryItems, total, whatsAppM
                     <CloseIcon />
                 </button>
                 
-                <div className="max-h-[80vh] overflow-y-auto">
+                <div className="max-h-[80vh] overflow-y-auto custom-scrollbar pr-2">
                     <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Resumo do Pedido</h3>
                     
                     <div className="space-y-2 mb-6">
@@ -75,8 +75,8 @@ export const Summary: React.FC<SummaryProps> = ({ summaryItems, total, whatsAppM
                                         <div className="text-right whitespace-nowrap pl-4 flex flex-col items-end">
                                             {item.promoPrice ? (
                                                 <>
-                                                    <span className="text-xs text-gray-400 line-through">{formatCurrency(item.price)}</span>
                                                     <span className="font-bold text-xl text-entre-purple-dark">{formatCurrency(item.promoPrice)}</span>
+                                                    <span className="text-xs text-gray-500 mb-0.5">Após 3 meses: {formatCurrency(item.price)}</span>
                                                 </>
                                             ) : (
                                                 <span className="font-bold text-lg text-gray-800">{formatCurrency(item.price)}</span>
@@ -109,27 +109,31 @@ export const Summary: React.FC<SummaryProps> = ({ summaryItems, total, whatsAppM
                         </div>
                     )}
 
-                    <div className="border-t-2 border-dashed border-gray-300 pt-4">
-                        <div className="flex justify-between items-center">
-                            <span className="text-xl font-bold text-gray-900">Total Mensal:</span>
-                            <span className="text-3xl font-bold text-gray-800">{formatCurrency(total.full)}</span>
-                        </div>
-                        {total.promo !== total.full && summaryItems[0]?.promo && (
-                            <div className="flex flex-col items-end mt-1">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-lg font-semibold text-gray-700">{summaryItems[0].promo.replace('*', '')}</span>
-                                    <span className="text-2xl font-bold text-entre-purple-dark">{formatCurrency(total.promo)}</span>
-                                </div>
-                                {totalPromoText && (
-                                    <span className="text-xs text-gray-500">{totalPromoText}</span>
-                                )}
+                    <div className="border-t-2 border-dashed border-gray-300 pt-6">
+                        <div className="flex flex-col items-end gap-2 mb-6">
+                            {/* Linha Total Mensal */}
+                            <div className="flex justify-between w-full items-baseline">
+                                <span className="text-xl md:text-2xl font-bold text-gray-700">Total Mensal:</span>
+                                <span className="text-xl md:text-2xl font-black text-entre-purple-dark">
+                                    {formatCurrency(total.full)}
+                                </span>
                             </div>
-                        )}
+
+                            {/* Linha Promoção (apenas se houver diferença) */}
+                            {total.promo !== total.full && (
+                                <div className="flex justify-between w-full items-baseline">
+                                    <span className="text-xl md:text-2xl font-bold text-green-600">Nos primeiros 3 meses:</span>
+                                    <span className="text-xl md:text-2xl font-black text-green-600">
+                                        {formatCurrency(total.promo)}
+                                    </span>
+                                </div>
+                            )}
+                        </div>
 
                         <button
                             onClick={handleWhatsAppClick}
                             disabled={summaryItems.length === 0}
-                            className="w-full mt-6 text-lg font-bold py-3 px-6 rounded-lg shadow-md transition-all duration-300 ease-in-out bg-entre-purple-dark text-white hover:bg-entre-purple-mid disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full mt-2 text-lg font-bold py-3 px-6 rounded-lg shadow-md transition-all duration-300 ease-in-out bg-entre-purple-dark text-white hover:bg-entre-purple-mid disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             Enviar meu pacote
                         </button>

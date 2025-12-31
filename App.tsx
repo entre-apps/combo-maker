@@ -11,8 +11,9 @@ import { Summary } from './components/Summary';
 import { StickySidebar } from './components/StickySidebar';
 import { MobileBottomBar } from './components/MobileBottomBar';
 import { NextStepButton } from './components/NextStepButton';
+import { StepsProgressBar } from './components/StepsProgressBar'; // Importação do novo componente
 import { DB, PROFILES } from './data/products';
-import type { PlanType, CartState, InternetPlan, AppInfo, OmniPlan, NoBreakPlan, Profile } from './types';
+import type { PlanType, CartState, InternetPlan, TvPlan, AppInfo, OmniPlan, NoBreakPlan, Profile } from './types';
 import { formatCurrency } from './utils/formatters';
 import { ProfileSelector } from './components/ProfileSelector';
 
@@ -58,6 +59,8 @@ const App: React.FC = () => {
         profileSelector: profileSelectorRef,
     }), []);
 
+    const isBusiness = cart.planType === 'empresa';
+
     // Configuração do destino do botão baseado no state nextStepId
     const currentNextStepConfig = useMemo((): NextStepConfig | null => {
         switch (nextStepId) {
@@ -66,13 +69,15 @@ const App: React.FC = () => {
             case 'nobreak':
                 return { targetRef: sectionsRef.nobreak, label: 'Proteção Elétrica', targetName: 'Mini NoBreak', stepId: 'nobreak' };
             case 'apps':
+                // Se for empresa, não existe passo "Apps", então o fluxo termina aqui (ou botão some)
+                if (isBusiness) return null;
                 return { targetRef: sectionsRef.apps, label: 'Conteúdo Digital', targetName: 'Apps', stepId: 'apps' };
             case 'checkout':
                 return null; // Chegou ao fim, esconde o botão
             default:
                 return { targetRef: sectionsRef.internet, label: 'Internet', targetName: 'Planos', stepId: 'internet' };
         }
-    }, [nextStepId, sectionsRef]);
+    }, [nextStepId, sectionsRef, isBusiness]);
 
     const handleScrollTo = useCallback((ref: React.RefObject<HTMLElement>) => {
         const headerOffset = 100; // Um pouco mais de espaço para o header
@@ -93,13 +98,15 @@ const App: React.FC = () => {
             handleScrollTo(currentNextStepConfig.targetRef);
             
             // Avança o estado lógico para o próximo item da sequência após o clique/scroll
-            // Sequência: Internet -> Omni -> NoBreak -> Apps -> Checkout (Esconde)
             if (nextStepId === 'internet') setNextStepId('omni');
             else if (nextStepId === 'omni') setNextStepId('nobreak');
-            else if (nextStepId === 'nobreak') setNextStepId('apps');
-            else if (nextStepId === 'apps') setNextStepId('checkout'); // Esconde o botão ao chegar nos apps
+            else if (nextStepId === 'nobreak') {
+                // Se for empresa, vai para o final (checkout), senão vai para apps
+                setNextStepId(isBusiness ? 'checkout' : 'apps');
+            }
+            else if (nextStepId === 'apps') setNextStepId('checkout');
         }
-    }, [currentNextStepConfig, handleScrollTo, nextStepId]);
+    }, [currentNextStepConfig, handleScrollTo, nextStepId, isBusiness]);
 
     const resetCartAddons = () => ({
         tv: null,
@@ -177,8 +184,9 @@ const App: React.FC = () => {
                 nobreak: prev.nobreak ? null : plan,
             };
         });
-        setNextStepId('apps');
-    }, []);
+        // Se for empresa, termina aqui. Se for casa, vai para apps.
+        setNextStepId(cart.planType === 'empresa' ? 'checkout' : 'apps');
+    }, [cart.planType]);
     
     const handleSelectProfile = useCallback((profile: Profile) => {
         setSelectedProfileId(profile.id);
@@ -259,8 +267,8 @@ const App: React.FC = () => {
         }, {} as Record<string, number>);
     }, [cart.apps]);
 
-    const { total, summaryItems, whatsAppMessage, comboDiscountInfo, totalPromoText } = useMemo(() => {
-        if (!cart.internet) return { total: { promo: 0, full: 0 }, summaryItems: [], whatsAppMessage: '', comboDiscountInfo: { isActive: false, amount: 0, percentage: 0 }, totalPromoText: undefined };
+    const { total, summaryItems, whatsAppMessage, comboDiscountInfo } = useMemo(() => {
+        if (!cart.internet) return { total: { promo: 0, full: 0 }, summaryItems: [], whatsAppMessage: '', comboDiscountInfo: { isActive: false, amount: 0, percentage: 0 } };
 
         let promoTotal = 0;
         let fullTotal = 0;
@@ -269,7 +277,6 @@ const App: React.FC = () => {
         
         const hasComboDiscount = cart.internet.comboDiscount ?? false;
         const isPromoPlan = cart.internet.promo && cart.internet.fullPrice;
-        const totalPromoText = isPromoPlan ? cart.internet.promo : undefined;
 
         if (isPromoPlan) {
             promoTotal += cart.internet.price;
@@ -278,12 +285,12 @@ const App: React.FC = () => {
                 id: cart.internet.id,
                 type: 'internet',
                 name: `${cart.internet.name} (${cart.planType})`,
-                price: cart.internet.fullPrice!,
-                promoPrice: cart.internet.price,
+                price: cart.internet.fullPrice!, // Preço cheio (âncora)
+                promoPrice: cart.internet.price, // Preço real com desconto
                 promo: cart.internet.promo,
             };
             items.push(internetItem);
-            message += `*Plano Internet:* ${internetItem.name} - ${formatCurrency(internetItem.price)} (Promoção: ${formatCurrency(internetItem.promoPrice)} ${internetItem.promo!.replace('*', '')})\n`;
+            message += `*Plano Internet:* ${internetItem.name} - ${formatCurrency(internetItem.price)} nos 3 primeiros meses (Após: ${formatCurrency(internetItem.price)})\n`;
         } else {
              promoTotal += cart.internet.price;
              fullTotal += cart.internet.price;
@@ -299,7 +306,7 @@ const App: React.FC = () => {
         let addonsFullPrice = 0;
         let addonsPromoPrice = 0;
 
-        // Lógica de TV mantida apenas para exibir itens se estiverem no state (ex: via Profile), mas a seleção manual foi removida
+        // Lógica de TV mantida apenas para exibir itens se estiverem no state (ex: via Profile)
         if (cart.tv) {
             const price = hasComboDiscount ? cart.tv.comboPrice : cart.tv.price;
             promoTotal += price;
@@ -311,8 +318,8 @@ const App: React.FC = () => {
                 type: 'tv',
                 name: `TV: ${cart.tv.name}`, 
                 details: cart.tv.details, 
-                price: cart.tv.price, 
-                promoPrice: hasComboDiscount ? price : undefined, 
+                price: price, // Fix: Usa o preço efetivo (com desconto se houver)
+                // Removemos promoPrice para evitar a lógica de "Após 3 meses"
                 promo: hasComboDiscount ? 'Oferta Combo' : undefined 
             });
             message += `*TV:* ${cart.tv.name}\n`;
@@ -330,8 +337,8 @@ const App: React.FC = () => {
                     id: app.id,
                     type: 'app',
                     name: `App: ${app.name}`,
-                    price: app.price,
-                    promoPrice: (hasComboDiscount && !isSkyFull) ? price : undefined,
+                    price: price, // Fix: Usa o preço efetivo (com desconto se houver)
+                    // Removemos promoPrice para evitar a lógica de "Após 3 meses"
                     promo: (hasComboDiscount && !isSkyFull) ? 'Oferta Combo' : undefined,
                 });
                 message += `*App:* ${app.name}\n`;
@@ -370,13 +377,14 @@ const App: React.FC = () => {
             message += `*Proteção:* ${cart.nobreak.name} - ${formatCurrency(cart.nobreak.price)}\n`;
         }
 
-        if (promoTotal !== fullTotal && isPromoPlan) {
-             message += `\n*Total Mensal:* ${formatCurrency(fullTotal)} (${formatCurrency(promoTotal)} ${cart.internet.promo!.replace('*', '')})`;
-        } else {
-             message += `\n*Total Mensal:* ${formatCurrency(promoTotal)}`;
+        message += `\n*Total Mensal:* ${formatCurrency(fullTotal)}`;
+        if (promoTotal !== fullTotal) {
+            message += `\n*Nos 3 primeiros meses:* ${formatCurrency(promoTotal)}`;
         }
 
         return { 
+            // promoTotal: Preço nos 3 primeiros meses (Internet Promo + Apps Combo)
+            // fullTotal: Preço Integral/Pós-promo (Internet Cheia + Apps Combo)
             total: { promo: promoTotal, full: fullTotal }, 
             summaryItems: items, 
             whatsAppMessage: message,
@@ -384,8 +392,7 @@ const App: React.FC = () => {
                 isActive: hasComboDiscount && addonsDiscountAmount > 0,
                 amount: addonsDiscountAmount,
                 percentage: addonsDiscountPercentage,
-            },
-            totalPromoText
+            }
         };
     }, [cart]);
 
@@ -394,7 +401,7 @@ const App: React.FC = () => {
     const isNoBreakSelected = !!cart.nobreak;
     const hasProfiles = cart.planType && PROFILES[cart.planType]?.length > 0;
     const ProtectedIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 inline-block ml-3 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>);
-    const noBreakTitle = cart.nobreak ? (<span className="flex items-center justify-center">Estou protegido<ProtectedIcon /></span>) : "Proteja a Internet contra falhas de energia";
+    const noBreakTitle = cart.nobreak ? (<span className="flex items-center justify-center">Estou protegido<ProtectedIcon /></span>) : "3. Proteção contra falhas de energia";
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-50 pb-20 lg:pb-0">
@@ -430,20 +437,26 @@ const App: React.FC = () => {
                                                 simpleMode={true}
                                             />
                                         )}
+
+                                        {/* Barra de Progresso Condicional - Aparece apenas se nenhum plano foi selecionado ainda */}
+                                        {!cart.internet && (
+                                            <StepsProgressBar planType={cart.planType} />
+                                        )}
+
                                         <p className="text-xs text-gray-400 mt-6 text-center">
-                                            *Valor da instalação R$500,00 com desconto de até 100% na adesão do Contrato de Permanência.
+                                            ¹Valor da instalação R$500,00 com desconto de até 100% na adesão do Contrato de Permanência.
                                         </p>
 
                                         {cart.planType === 'empresa' && (
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8 max-w-5xl mx-auto animate-fade-in-scale">
                                                 <div className="bg-white border-l-4 border-entre-purple-mid p-5 rounded-r-xl shadow-sm text-left">
-                                                    <h4 className="font-bold text-entre-purple-dark text-sm mb-2">¹ Gerência Proativa</h4>
+                                                    <h4 className="font-bold text-entre-purple-dark text-sm mb-2">² Gerência Proativa</h4>
                                                     <p className="text-xs text-gray-600 leading-relaxed">
                                                         Monitoramento proativo e contínuo da sua conexão. Em qualquer caso de instabilidade nossa equipe entra em contato imediato com você e, se necessário, mobiliza suporte técnico para reparo.
                                                     </p>
                                                 </div>
                                                 <div className="bg-white border-l-4 border-entre-purple-mid p-5 rounded-r-xl shadow-sm text-left">
-                                                    <h4 className="font-bold text-entre-purple-dark text-sm mb-2">² IP Fixo</h4>
+                                                    <h4 className="font-bold text-entre-purple-dark text-sm mb-2">³ IP Fixo</h4>
                                                     <p className="text-xs text-gray-600 leading-relaxed">
                                                         Sua empresa passa a ter um endereço IP exclusivo na Internet, facilitando acessos remotos, integrações com sistemas e aumentando a segurança das operações.
                                                     </p>
@@ -458,7 +471,7 @@ const App: React.FC = () => {
                         {showAddons && (
                             <div className="space-y-12 animate-fade-in-scale">
                                 <div ref={sectionsRef.omni}>
-                                    <Section title="2. Expandindo o Wi-Fi" subtitle="" onSkip={() => handleSkip('nobreak')} logoSrc="/images/omni_logo.png">
+                                    <Section title="2. Expandindo a cobertura WIFI" subtitle="" onSkip={() => handleSkip('nobreak')} logoSrc="/images/omni_logo.png">
                                         <OmniExplanation />
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
                                             {DB.omni.map(plan => (
@@ -469,7 +482,12 @@ const App: React.FC = () => {
                                 </div>
                                 <div ref={sectionsRef.nobreak} className={`relative -mx-4 md:-mx-6 lg:mx-0 px-4 md:px-6 lg:rounded-3xl transition-colors duration-700 ease-in-out ${isNoBreakSelected ? 'bg-entre-purple-light/50' : 'bg-gray-900'}`} id="section-nobreak">
                                     <div className="absolute top-8 right-8 hidden lg:block opacity-80 pointer-events-none" aria-hidden="true"><img src="/images/nobreak_source.png" alt="" className="h-20 w-auto max-w-[200px]" /></div>
-                                    <Section title={noBreakTitle} subtitle="" isDarkSection={!isNoBreakSelected} onSkip={() => handleSkip('apps')}>
+                                    <Section 
+                                        title={noBreakTitle} 
+                                        subtitle="" 
+                                        isDarkSection={!isNoBreakSelected} 
+                                        onSkip={isBusiness ? undefined : () => handleSkip('apps')}
+                                    >
                                         <NoBreakExplanation isDark={!isNoBreakSelected} />
                                         <div className="max-w-md mx-auto">
                                             <PlanCard key={DB.nobreak.id} plan={DB.nobreak} isSelected={isNoBreakSelected} onSelect={() => handleSelectNobreak(DB.nobreak)} planType="addon" isDark={!isNoBreakSelected} autoHeight={true} />
@@ -477,13 +495,14 @@ const App: React.FC = () => {
                                     </Section>
                                 </div>
                                 
-                                {/* Seção TV removida */}
-
-                                <div ref={sectionsRef.apps}>
-                                    <Section title="3. Streaming e Apps" subtitle="Selecione quantos aplicativos desejar para adicionar ao seu combo.">
-                                        <AppSection apps={DB.apps} selectedApps={cart.apps} onSelectApp={handleSelectApp} hasComboDiscount={cart.internet?.comboDiscount} appTierCounts={appTierCounts} />
-                                    </Section>
-                                </div>
+                                {/* Seção Apps - Apenas para Pessoa Física (Casa) */}
+                                {cart.planType === 'casa' && (
+                                    <div ref={sectionsRef.apps}>
+                                        <Section title="4. Streaming e Apps" subtitle="Selecione quantos aplicativos desejar para adicionar ao seu combo.">
+                                            <AppSection apps={DB.apps} selectedApps={cart.apps} onSelectApp={handleSelectApp} hasComboDiscount={cart.internet?.comboDiscount} appTierCounts={appTierCounts} />
+                                        </Section>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
@@ -492,7 +511,7 @@ const App: React.FC = () => {
                     {showAddons && (
                         <div className="hidden lg:block lg:col-span-4 transition-all duration-500 animate-slide-in-right">
                             <div className="sticky top-24">
-                                <StickySidebar summaryItems={summaryItems} total={total} whatsAppMessage={whatsAppMessage} comboDiscountInfo={comboDiscountInfo} onClearCart={handleClearCart} onRemoveItem={handleRemoveItem} totalPromoText={totalPromoText} />
+                                <StickySidebar summaryItems={summaryItems} total={total} whatsAppMessage={whatsAppMessage} comboDiscountInfo={comboDiscountInfo} onClearCart={handleClearCart} onRemoveItem={handleRemoveItem} />
                                 {currentNextStepConfig && (
                                     <NextStepButton label={currentNextStepConfig.label} targetName={currentNextStepConfig.targetName} onClick={handleNextStepClick} variant="desktop" />
                                 )}
@@ -513,7 +532,7 @@ const App: React.FC = () => {
             )}
 
             {isCartOpen && (
-                <Summary summaryItems={summaryItems} total={total} whatsAppMessage={whatsAppMessage} onClose={() => setIsCartOpen(false)} onClearCart={handleClearCart} comboDiscountInfo={comboDiscountInfo} onRemoveItem={handleRemoveItem} totalPromoText={totalPromoText} />
+                <Summary summaryItems={summaryItems} total={total} whatsAppMessage={whatsAppMessage} onClose={() => setIsCartOpen(false)} onClearCart={handleClearCart} comboDiscountInfo={comboDiscountInfo} onRemoveItem={handleRemoveItem} />
             )}
         </div>
     );
