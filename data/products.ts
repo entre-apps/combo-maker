@@ -68,18 +68,18 @@ export const DB: DbData = {
                 description: 'Mais velocidade para as atividades do seu dia a dia',
                 features: ['Instalação Gratuita¹', 'Wifi 5', 'Upload 150 Mega'],
                 price: 112.90, 
-                priceDetails: 'R$112,90'
+                priceDetails: 'R$118,90'
             },
             { 
                 id: 'res-800', 
                 name: '800 Mega', 
                 description: 'Ideal para multiacessos, jogos, trabalho remoto e streaming',
                 features: ['Instalação Gratuita¹', 'Wifi 6 (mais estável)', 'Upload 400 Mega'],
-                price: 89.90,
-                fullPrice: 114.90, 
-                priceDetails: 'R$89,90', 
-                originalPrice: 'de: R$114,90', 
-                promo: '*Nos primeiros 3 meses, após R$114,90', // Texto atualizado
+                price: 94.90,
+                fullPrice: 119.90, 
+                priceDetails: 'R$94,90', 
+                originalPrice: 'de: R$119,90', 
+                promo: '*Nos primeiros 3 meses, após R$119,90', // Texto atualizado
                 bestOffer: true, 
                 comboDiscount: true 
             },
