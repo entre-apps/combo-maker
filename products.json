@@ -93,8 +93,8 @@
             "Wifi 5",
             "Upload 150 Mega"
           ],
-          "price": 112.9,
-          "priceDetails": "R$112,90"
+          "price": 118.9,
+          "priceDetails": "R$118,90"
         },
         {
           "id": "res-800",
@@ -105,10 +105,10 @@
             "Wifi 6 (mais estável)",
             "Upload 400 Mega"
           ],
-          "price": 89.9,
-          "fullPrice": 114.9,
-          "priceDetails": "R$89,90",
-          "originalPrice": "de: R$114,90",
+          "price": 94.9,
+          "fullPrice": 119.9,
+          "priceDetails": "R$04,90",
+          "originalPrice": "de: R$119,90",
           "promo": "*Nos primeiros 3 meses",
           "bestOffer": true,
           "comboDiscount": true
