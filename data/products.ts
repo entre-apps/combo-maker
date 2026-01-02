@@ -67,7 +67,7 @@ export const DB: DbData = {
                 name: '600 Mega', 
                 description: 'Mais velocidade para as atividades do seu dia a dia',
                 features: ['Instalação Gratuita¹', 'Wifi 5', 'Upload 150 Mega'],
-                price: 112.90, 
+                price: 118.90, 
                 priceDetails: 'R$118,90'
             },
             { 
