@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useRef } from 'react';
 import { AppCard } from './AppCard';
 import type { AppInfo } from '../types';
@@ -10,7 +11,7 @@ interface AppSectionProps {
     appTierCounts: Record<string, number>;
 }
 
-const ComboMessage: React.FC<{ hasComboDiscount?: boolean }> = ({ hasComboDiscount }) => {
+const ComboMessage: React.FC = () => {
     return (
         <div className="text-center mb-10 p-5 bg-entre-purple-light/30 border-2 border-dashed border-entre-purple-mid/30 rounded-2xl relative overflow-hidden">
              <div className="absolute -right-8 -top-8 w-24 h-24 bg-entre-orange opacity-10 rounded-full blur-2xl"></div>
