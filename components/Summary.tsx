@@ -37,7 +37,7 @@ const LightbulbIcon = () => (
     </svg>
 );
 
-export const Summary: React.FC<SummaryProps> = ({ summaryItems, total, whatsAppMessage, onClose, onClearCart, onRemoveItem, comboDiscountInfo, upgradeComparison, onAcceptUpgrade }) => {
+export const Summary: React.FC<SummaryProps> = ({ summaryItems, total, whatsAppMessage, onClose, onRemoveItem, comboDiscountInfo, upgradeComparison, onAcceptUpgrade }) => {
 
     const handleWhatsAppClick = () => {
         const phoneNumber = '5522974001553';
