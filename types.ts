@@ -75,3 +75,12 @@ export interface CartState {
     omni: OmniPlan | null;
     nobreak: NoBreakPlan | null;
 }
+
+export interface UpgradeComparison {
+    show: boolean;
+    diffMonthly: number;
+    diffDaily: number;
+    addonsSavings: number;
+    isCheaper: boolean;
+    totalUpgrade: number;
+}

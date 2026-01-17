@@ -12,9 +12,9 @@ import { StickySidebar } from './components/StickySidebar';
 import { MobileBottomBar } from './components/MobileBottomBar';
 import { NextStepButton } from './components/NextStepButton';
 import { StepsProgressBar } from './components/StepsProgressBar';
-import { BusinessFeaturesExplanation } from './components/BusinessFeaturesExplanation'; // Importação do novo componente
+import { BusinessFeaturesExplanation } from './components/BusinessFeaturesExplanation';
 import { DB, PROFILES } from './data/products';
-import type { PlanType, CartState, InternetPlan, AppInfo, OmniPlan, NoBreakPlan, Profile } from './types';
+import type { PlanType, CartState, InternetPlan, AppInfo, OmniPlan, NoBreakPlan, Profile, UpgradeComparison } from './types';
 import { formatCurrency } from './utils/formatters';
 import { ProfileSelector } from './components/ProfileSelector';
 import { UpgradeNudgeModal } from './components/UpgradeNudgeModal';
@@ -34,15 +34,6 @@ interface PendingRemoval {
     type: string;
     id?: string;
     name: string;
-}
-
-export interface UpgradeComparison {
-    show: boolean;
-    diffMonthly: number;
-    diffDaily: number;
-    addonsSavings: number;
-    isCheaper: boolean;
-    totalUpgrade: number;
 }
 
 const App: React.FC = () => {
