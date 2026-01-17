@@ -93,8 +93,8 @@
             "Wifi 5",
             "Upload 150 Mega"
           ],
-          "price": 118.9,
-          "priceDetails": "R$118,90"
+          "price": 112.9,
+          "priceDetails": "R$112,90"
         },
         {
           "id": "res-800",
@@ -105,10 +105,10 @@
             "Wifi 6 (mais estável)",
             "Upload 400 Mega"
           ],
-          "price": 94.9,
-          "fullPrice": 119.9,
-          "priceDetails": "R$04,90",
-          "originalPrice": "de: R$119,90",
+          "price": 89.9,
+          "fullPrice": 114.9,
+          "priceDetails": "R$89,90",
+          "originalPrice": "de: R$114,90",
           "promo": "*Nos primeiros 3 meses",
           "bestOffer": true,
           "comboDiscount": true
@@ -333,7 +333,7 @@
         "name": "Revistaria",
         "tier": "Standard",
         "category": "Educação e Leitura",
-        "details": "Banca digital com acesso a revistas brasileiras em formato digital/PDF.",
+        "details": "Banca digital com acesso a revistas brasileiras em formato digital/PDF.',",
         "price": 20,
         "comboPrice": 15
       },
@@ -389,7 +389,7 @@
         "category": "Séries e Filmes",
         "details": "Streaming da Disney com anúncios; catálogo Disney, Pixar, Marvel, Star Wars e NatGeo.",
         "price": 35,
-        "comboPrice": 30
+        "comboPrice": 25
       },
       {
         "id": "app-hbo-ads",
@@ -398,7 +398,7 @@
         "category": "Séries e Filmes",
         "details": "Plano com anúncios do Max (HBO), com filmes, séries e esportes selecionados.",
         "price": 35,
-        "comboPrice": 30
+        "comboPrice": 25
       },
       {
         "id": "app-cindie",
@@ -407,7 +407,7 @@
         "category": "Séries e Filmes",
         "details": "Cindie: streaming de cinema e séries independentes, curadoria internacional.",
         "price": 35,
-        "comboPrice": 30
+        "comboPrice": 25
       },
       {
         "id": "app-leitura360",
@@ -416,14 +416,14 @@
         "category": "Educação e Leitura",
         "details": "Plataforma de leitura multimídia com audiolivros e revistas",
         "price": 35,
-        "comboPrice": 30
+        "comboPrice": 25
       },
       {
         "id": "app-disney-noads",
         "name": "Disney+",
         "tier": "Premium",
         "category": "Séries e Filmes",
-        "details": "Streaming da Disney sem anúncios em planos elegíveis; filmes e séries Disney, Pixar, Marvel, Star Wars e NatGeo.",
+        "details": "Streaming da Disney sem anúncios; filmes e séries Disney, Pixar, Marvel, Star Wars e NatGeo.",
         "price": 40,
         "comboPrice": 35
       },

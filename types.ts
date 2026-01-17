@@ -14,7 +14,8 @@ export interface Profile {
         appIds?: string[];
         omniId?: string;
         nobreakId?: string;
-    }
+    };
+    isPopular?: boolean;
 }
 
 export interface InternetPlan {
@@ -30,6 +31,7 @@ export interface InternetPlan {
     bestOffer?: boolean;
     comboDiscount?: boolean;
     highlight?: string;
+    isPopular?: boolean;
 }
 
 export interface TvPlan {
@@ -55,6 +57,7 @@ export interface OmniPlan {
     name: string;
     details: string;
     price: number;
+    installationDetails?: string;
 }
 
 export interface NoBreakPlan {

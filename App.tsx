@@ -11,11 +11,14 @@ import { Summary } from './components/Summary';
 import { StickySidebar } from './components/StickySidebar';
 import { MobileBottomBar } from './components/MobileBottomBar';
 import { NextStepButton } from './components/NextStepButton';
-import { StepsProgressBar } from './components/StepsProgressBar'; // Importação do novo componente
+import { StepsProgressBar } from './components/StepsProgressBar';
+import { BusinessFeaturesExplanation } from './components/BusinessFeaturesExplanation'; // Importação do novo componente
 import { DB, PROFILES } from './data/products';
 import type { PlanType, CartState, InternetPlan, AppInfo, OmniPlan, NoBreakPlan, Profile } from './types';
 import { formatCurrency } from './utils/formatters';
 import { ProfileSelector } from './components/ProfileSelector';
+import { UpgradeNudgeModal } from './components/UpgradeNudgeModal';
+import { RemovalConfirmationModal } from './components/RemovalConfirmationModal';
 
 type StepName = 'internet' | 'omni' | 'nobreak' | 'apps' | 'checkout';
 type InternetViewMode = 'plans' | 'combos';
@@ -25,6 +28,21 @@ interface NextStepConfig {
     label: string;
     targetName: string;
     stepId: StepName;
+}
+
+interface PendingRemoval {
+    type: string;
+    id?: string;
+    name: string;
+}
+
+export interface UpgradeComparison {
+    show: boolean;
+    diffMonthly: number;
+    diffDaily: number;
+    addonsSavings: number;
+    isCheaper: boolean;
+    totalUpgrade: number;
 }
 
 const App: React.FC = () => {
@@ -38,11 +56,10 @@ const App: React.FC = () => {
     });
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [selectedProfileId, setSelectedProfileId] = useState<string | null>(null);
+    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+    const [itemPendingRemoval, setItemPendingRemoval] = useState<PendingRemoval | null>(null);
     
-    // Estado para controlar a visualização da seção de internet (Planos vs Combos)
-    const [internetViewMode, setInternetViewMode] = useState<InternetViewMode>('plans');
-    
-    // Estado para controlar qual é o "Próximo Passo" lógico sugerido pelo botão
+    const [internetViewMode, setInternetViewMode] = useState<InternetViewMode>('combos');
     const [nextStepId, setNextStepId] = useState<StepName>('internet');
 
     const internetRef = useRef<HTMLDivElement>(null);
@@ -61,26 +78,24 @@ const App: React.FC = () => {
 
     const isBusiness = cart.planType === 'empresa';
 
-    // Configuração do destino do botão baseado no state nextStepId
     const currentNextStepConfig = useMemo((): NextStepConfig | null => {
         switch (nextStepId) {
             case 'omni':
                 return { targetRef: sectionsRef.omni, label: 'Expandir Wi-Fi', targetName: 'Omni', stepId: 'omni' };
             case 'nobreak':
-                return { targetRef: sectionsRef.nobreak, label: 'Proteção Elétrica', targetName: 'Mini NoBreak', stepId: 'nobreak' };
+                return { targetRef: sectionsRef.nobreak, label: 'Proteção Elétrica', targetName: 'Mini No-Break', stepId: 'nobreak' };
             case 'apps':
-                // Se for empresa, não existe passo "Apps", então o fluxo termina aqui (ou botão some)
                 if (isBusiness) return null;
                 return { targetRef: sectionsRef.apps, label: 'Conteúdo Digital', targetName: 'Apps', stepId: 'apps' };
             case 'checkout':
-                return null; // Chegou ao fim, esconde o botão
+                return null;
             default:
                 return { targetRef: sectionsRef.internet, label: 'Internet', targetName: 'Planos', stepId: 'internet' };
         }
     }, [nextStepId, sectionsRef, isBusiness]);
 
     const handleScrollTo = useCallback((ref: React.RefObject<HTMLElement>) => {
-        const headerOffset = 100; // Um pouco mais de espaço para o header
+        const headerOffset = 100;
         if (ref.current) {
             const elementPosition = ref.current.getBoundingClientRect().top;
             const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
@@ -92,16 +107,13 @@ const App: React.FC = () => {
         }
     }, []);
 
-    // Ação do botão "Próximo Passo"
     const handleNextStepClick = useCallback(() => {
         if (currentNextStepConfig?.targetRef) {
             handleScrollTo(currentNextStepConfig.targetRef);
             
-            // Avança o estado lógico para o próximo item da sequência após o clique/scroll
             if (nextStepId === 'internet') setNextStepId('omni');
             else if (nextStepId === 'omni') setNextStepId('nobreak');
             else if (nextStepId === 'nobreak') {
-                // Se for empresa, vai para o final (checkout), senão vai para apps
                 setNextStepId(isBusiness ? 'checkout' : 'apps');
             }
             else if (nextStepId === 'apps') setNextStepId('checkout');
@@ -117,13 +129,12 @@ const App: React.FC = () => {
 
     const handleSelectPlanType = useCallback((type: PlanType) => {
         setSelectedProfileId(null);
-        setInternetViewMode('plans'); // Reseta a visualização para planos ao trocar o tipo
+        setInternetViewMode(PROFILES[type]?.length > 0 ? 'combos' : 'plans');
         setCart({
             planType: type,
             ...resetCartAddons(),
             internet: null,
         });
-        // Reinicia o fluxo
         setNextStepId('internet');
         
         setTimeout(() => {
@@ -134,6 +145,12 @@ const App: React.FC = () => {
     }, [handleScrollTo, sectionsRef]);
 
     const handleSelectInternet = useCallback((plan: InternetPlan) => {
+        if (plan.id === 'res-600') {
+            setShowUpgradeModal(true);
+            setCart(prev => ({ ...prev, internet: plan }));
+            return;
+        }
+
         setSelectedProfileId(null);
         setCart(prev => ({
             ...prev,
@@ -142,6 +159,20 @@ const App: React.FC = () => {
 
         setNextStepId('omni');
     }, []);
+
+    const handleUpgradeAccept = () => {
+        const plan800 = DB.internet.casa.find(p => p.id === 'res-800');
+        if (plan800) {
+            setCart(prev => ({ ...prev, internet: plan800 }));
+        }
+        setShowUpgradeModal(false);
+        setNextStepId('omni');
+    };
+
+    const handleUpgradeDecline = () => {
+        setShowUpgradeModal(false);
+        setNextStepId('omni');
+    };
 
     const handleSelectApp = useCallback((app: AppInfo) => {
         setSelectedProfileId(null);
@@ -155,15 +186,12 @@ const App: React.FC = () => {
                 const tierCount = newApps.filter(a => a.tier === app.tier).length;
                 if (tierCount < 3) {
                     newApps.push(app);
-                } else {
-                    console.warn(`Tier limit for ${app.tier} reached.`);
                 }
             }
             
             return { ...prev, apps: newApps };
         });
     }, []);
-
 
     const handleSelectOmni = useCallback((plan: OmniPlan) => {
         setSelectedProfileId(null);
@@ -173,7 +201,7 @@ const App: React.FC = () => {
                 omni: prev.omni?.id === plan.id ? null : plan,
             };
         });
-        setNextStepId('nobreak');
+        setNextStepId('omni');
     }, []);
 
     const handleSelectNobreak = useCallback((plan: NoBreakPlan) => {
@@ -184,9 +212,7 @@ const App: React.FC = () => {
                 nobreak: prev.nobreak ? null : plan,
             };
         });
-        // Se for empresa, termina aqui. Se for casa, vai para apps.
-        setNextStepId(cart.planType === 'empresa' ? 'checkout' : 'apps');
-    }, [cart.planType]);
+    }, []);
     
     const handleSelectProfile = useCallback((profile: Profile) => {
         setSelectedProfileId(profile.id);
@@ -205,8 +231,6 @@ const App: React.FC = () => {
 
         setCart(newCart);
         setNextStepId('omni');
-        
-        // Scroll automático removido conforme solicitado para manter o usuário no card selecionado
     }, [cart.planType]);
 
     const handleClearCart = useCallback(() => {
@@ -219,13 +243,30 @@ const App: React.FC = () => {
             nobreak: null,
         });
         setSelectedProfileId(null);
-        setInternetViewMode('plans');
+        setInternetViewMode('combos');
         setIsCartOpen(false);
         setNextStepId('internet');
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
 
-    const handleRemoveItem = useCallback((type: string, id?: string) => {
+    const handleRemoveItemRequest = useCallback((type: string, id?: string) => {
+        let name = '';
+        if (type === 'tv') name = cart.tv?.name || 'TV';
+        else if (type === 'omni') name = cart.omni?.name || 'Wi-Fi Extra';
+        else if (type === 'nobreak') name = cart.nobreak?.name || 'Mini No-Break';
+        else if (type === 'app' && id) {
+            const app = cart.apps.find(a => a.id === id);
+            name = app?.name || 'Aplicativo';
+        }
+
+        setItemPendingRemoval({ type, id, name });
+    }, [cart]);
+
+    const confirmRemoval = useCallback(() => {
+        if (!itemPendingRemoval) return;
+
+        const { type, id } = itemPendingRemoval;
+
         setCart(prev => {
             const newCart = { ...prev };
             
@@ -242,6 +283,12 @@ const App: React.FC = () => {
             setSelectedProfileId(null);
             return newCart;
         });
+
+        setItemPendingRemoval(null);
+    }, [itemPendingRemoval]);
+
+    const cancelRemoval = useCallback(() => {
+        setItemPendingRemoval(null);
     }, []);
 
     const handleSkip = (targetStep: StepName) => {
@@ -267,8 +314,8 @@ const App: React.FC = () => {
         }, {} as Record<string, number>);
     }, [cart.apps]);
 
-    const { total, summaryItems, whatsAppMessage, comboDiscountInfo } = useMemo(() => {
-        if (!cart.internet) return { total: { promo: 0, full: 0 }, summaryItems: [], whatsAppMessage: '', comboDiscountInfo: { isActive: false, amount: 0, percentage: 0 } };
+    const { total, summaryItems, whatsAppMessage, comboDiscountInfo, upgradeComparison } = useMemo(() => {
+        if (!cart.internet) return { total: { promo: 0, full: 0 }, summaryItems: [], whatsAppMessage: '', comboDiscountInfo: { isActive: false, amount: 0, percentage: 0 }, upgradeComparison: null };
 
         let promoTotal = 0;
         let fullTotal = 0;
@@ -285,8 +332,8 @@ const App: React.FC = () => {
                 id: cart.internet.id,
                 type: 'internet',
                 name: `${cart.internet.name} (${cart.planType})`,
-                price: cart.internet.fullPrice!, // Preço cheio (âncora)
-                promoPrice: cart.internet.price, // Preço real com desconto
+                price: cart.internet.fullPrice!,
+                promoPrice: cart.internet.price,
                 promo: cart.internet.promo,
             };
             items.push(internetItem);
@@ -306,7 +353,6 @@ const App: React.FC = () => {
         let addonsFullPrice = 0;
         let addonsPromoPrice = 0;
 
-        // Lógica de TV mantida apenas para exibir itens se estiverem no state (ex: via Profile)
         if (cart.tv) {
             const price = hasComboDiscount ? cart.tv.comboPrice : cart.tv.price;
             promoTotal += price;
@@ -318,11 +364,10 @@ const App: React.FC = () => {
                 type: 'tv',
                 name: `TV: ${cart.tv.name}`, 
                 details: cart.tv.details, 
-                price: price, // Fix: Usa o preço efetivo (com desconto se houver)
-                // Removemos promoPrice para evitar a lógica de "Após 3 meses"
+                price: price,
                 promo: hasComboDiscount ? 'Oferta Combo' : undefined 
             });
-            message += `*TV:* ${cart.tv.name}\n`;
+            // Linha da TV removida da mensagem do WhatsApp
         }
 
         if (cart.apps.length > 0) {
@@ -337,8 +382,7 @@ const App: React.FC = () => {
                     id: app.id,
                     type: 'app',
                     name: `App: ${app.name}`,
-                    price: price, // Fix: Usa o preço efetivo (com desconto se houver)
-                    // Removemos promoPrice para evitar a lógica de "Após 3 meses"
+                    price: price,
                     promo: (hasComboDiscount && !isSkyFull) ? 'Oferta Combo' : undefined,
                 });
                 message += `*App:* ${app.name}\n`;
@@ -382,9 +426,45 @@ const App: React.FC = () => {
             message += `\n*Nos 3 primeiros meses:* ${formatCurrency(promoTotal)}`;
         }
 
+        let upgradeInfo: UpgradeComparison | null = null;
+        const needsNudge = cart.internet?.id === 'res-500' || cart.internet?.id === 'res-600';
+        
+        if (needsNudge) {
+            const plan800 = DB.internet.casa.find(p => p.id === 'res-800');
+            if (plan800) {
+                const base800Full = plan800.fullPrice || 119.90;
+                let hypotheticalUpgradeTotal = base800Full;
+                let potentialAddonsSavings = 0;
+
+                cart.apps.forEach(app => {
+                    const isSkyFull = app.tier === 'Sky Full';
+                    const effectivePrice = isSkyFull ? app.price : app.comboPrice;
+                    hypotheticalUpgradeTotal += effectivePrice;
+                    potentialAddonsSavings += (app.price - effectivePrice);
+                });
+
+                if (cart.tv) {
+                    hypotheticalUpgradeTotal += cart.tv.comboPrice;
+                    potentialAddonsSavings += (cart.tv.price - cart.tv.comboPrice);
+                }
+
+                if (cart.omni) hypotheticalUpgradeTotal += cart.omni.price;
+                if (cart.nobreak) hypotheticalUpgradeTotal += cart.nobreak.price;
+
+                const diffMonthly = hypotheticalUpgradeTotal - fullTotal;
+                
+                upgradeInfo = {
+                    show: true,
+                    diffMonthly: diffMonthly,
+                    diffDaily: diffMonthly / 30,
+                    addonsSavings: potentialAddonsSavings,
+                    isCheaper: diffMonthly <= 0,
+                    totalUpgrade: hypotheticalUpgradeTotal
+                };
+            }
+        }
+
         return { 
-            // promoTotal: Preço nos 3 primeiros meses (Internet Promo + Apps Combo)
-            // fullTotal: Preço Integral/Pós-promo (Internet Cheia + Apps Combo)
             total: { promo: promoTotal, full: fullTotal }, 
             summaryItems: items, 
             whatsAppMessage: message,
@@ -392,14 +472,14 @@ const App: React.FC = () => {
                 isActive: hasComboDiscount && addonsDiscountAmount > 0,
                 amount: addonsDiscountAmount,
                 percentage: addonsDiscountPercentage,
-            }
+            },
+            upgradeComparison: upgradeInfo
         };
     }, [cart]);
 
     const internetPlans = cart.planType ? DB.internet[cart.planType] : [];
     const showAddons = !!cart.internet;
     const isNoBreakSelected = !!cart.nobreak;
-    const hasProfiles = cart.planType && PROFILES[cart.planType]?.length > 0;
     const ProtectedIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 inline-block ml-3 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>);
     const noBreakTitle = cart.nobreak ? (<span className="flex items-center justify-center">Estou protegido<ProtectedIcon /></span>) : "3. Proteção contra falhas de energia";
 
@@ -410,7 +490,6 @@ const App: React.FC = () => {
                 <Section title="Monte seu combo ideal da Entre" subtitle="Siga os passos abaixo para personalizar os serviços da Entre para você." isIntro />
 
                 <div className="lg:grid lg:grid-cols-12 lg:gap-8">
-                    {/* Left Column - Main Content */}
                     <div className={`lg:col-span-${showAddons ? '8' : '12'} transition-all duration-500`}>
                         <PlanTypeSelector selectedType={cart.planType} onSelectType={handleSelectPlanType} />
 
@@ -420,8 +499,8 @@ const App: React.FC = () => {
                                     <Section 
                                         title={internetViewMode === 'plans' ? "1. Escolha sua Internet Premium" : "1. Escolha um Combo Sugerido"}
                                         subtitle={internetViewMode === 'plans' ? `A melhor conexão para ${cart.planType === 'casa' ? 'sua casa' : 'sua empresa'}.` : "Perfis montados para diferentes estilos de vida."}
-                                        onSecondaryAction={hasProfiles ? toggleInternetViewMode : undefined} 
-                                        secondaryActionText={hasProfiles ? (internetViewMode === 'plans' ? "Ver Combos Sugeridos" : "Ver Planos Individuais") : undefined}
+                                        onSecondaryAction={PROFILES[cart.planType]?.length > 0 ? toggleInternetViewMode : undefined} 
+                                        secondaryActionText={PROFILES[cart.planType]?.length > 0 ? (internetViewMode === 'plans' ? "Ver Combos Sugeridos" : "Ver Planos Individuais") : undefined}
                                     >
                                         {internetViewMode === 'plans' ? (
                                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in-scale">
@@ -438,30 +517,17 @@ const App: React.FC = () => {
                                             />
                                         )}
 
-                                        {/* Barra de Progresso Condicional - Aparece apenas se nenhum plano foi selecionado ainda */}
-                                        {!cart.internet && (
-                                            <StepsProgressBar planType={cart.planType} />
-                                        )}
-
                                         <p className="text-xs text-gray-400 mt-6 text-center">
                                             ¹Valor da instalação R$500,00 com desconto de até 100% na adesão do Contrato de Permanência.
                                         </p>
 
-                                        {cart.planType === 'empresa' && (
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8 max-w-5xl mx-auto animate-fade-in-scale">
-                                                <div className="bg-white border-l-4 border-entre-purple-mid p-5 rounded-r-xl shadow-sm text-left">
-                                                    <h4 className="font-bold text-entre-purple-dark text-sm mb-2">² Gerência Proativa</h4>
-                                                    <p className="text-xs text-gray-600 leading-relaxed">
-                                                        Monitoramento proativo e contínuo da sua conexão. Em qualquer caso de instabilidade nossa equipe entra em contato imediato com você e, se necessário, mobiliza suporte técnico para reparo.
-                                                    </p>
-                                                </div>
-                                                <div className="bg-white border-l-4 border-entre-purple-mid p-5 rounded-r-xl shadow-sm text-left">
-                                                    <h4 className="font-bold text-entre-purple-dark text-sm mb-2">³ IP Fixo</h4>
-                                                    <p className="text-xs text-gray-600 leading-relaxed">
-                                                        Sua empresa passa a ter um endereço IP exclusivo na Internet, facilitando acessos remotos, integrações com sistemas e aumentando a segurança das operações.
-                                                    </p>
-                                                </div>
-                                            </div>
+                                        {/* EXIBIÇÃO DA DESCRIÇÃO EMPRESARIAL */}
+                                        {isBusiness && (
+                                            <BusinessFeaturesExplanation />
+                                        )}
+
+                                        {!cart.internet && (
+                                            <StepsProgressBar planType={cart.planType} />
                                         )}
                                     </Section>
                                 </div>
@@ -482,12 +548,7 @@ const App: React.FC = () => {
                                 </div>
                                 <div ref={sectionsRef.nobreak} className={`relative -mx-4 md:-mx-6 lg:mx-0 px-4 md:px-6 lg:rounded-3xl transition-colors duration-700 ease-in-out ${isNoBreakSelected ? 'bg-entre-purple-light/50' : 'bg-gray-900'}`} id="section-nobreak">
                                     <div className="absolute top-8 right-8 hidden lg:block opacity-80 pointer-events-none" aria-hidden="true"><img src="/images/nobreak_source.png" alt="" className="h-20 w-auto max-w-[200px]" /></div>
-                                    <Section 
-                                        title={noBreakTitle} 
-                                        subtitle="" 
-                                        isDarkSection={!isNoBreakSelected} 
-                                        onSkip={isBusiness ? undefined : () => handleSkip('apps')}
-                                    >
+                                    <Section title={noBreakTitle} subtitle="" isDarkSection={!isNoBreakSelected} onSkip={isBusiness ? undefined : () => handleSkip('apps')}>
                                         <NoBreakExplanation isDark={!isNoBreakSelected} />
                                         <div className="max-w-md mx-auto">
                                             <PlanCard key={DB.nobreak.id} plan={DB.nobreak} isSelected={isNoBreakSelected} onSelect={() => handleSelectNobreak(DB.nobreak)} planType="addon" isDark={!isNoBreakSelected} autoHeight={true} />
@@ -495,7 +556,6 @@ const App: React.FC = () => {
                                     </Section>
                                 </div>
                                 
-                                {/* Seção Apps - Apenas para Pessoa Física (Casa) */}
                                 {cart.planType === 'casa' && (
                                     <div ref={sectionsRef.apps}>
                                         <Section title="4. Streaming e Apps" subtitle="Selecione quantos aplicativos desejar para adicionar ao seu combo.">
@@ -507,11 +567,19 @@ const App: React.FC = () => {
                         )}
                     </div>
 
-                    {/* Right Column - Sticky Sidebar (Desktop Only) */}
                     {showAddons && (
                         <div className="hidden lg:block lg:col-span-4 transition-all duration-500 animate-slide-in-right">
                             <div className="sticky top-24">
-                                <StickySidebar summaryItems={summaryItems} total={total} whatsAppMessage={whatsAppMessage} comboDiscountInfo={comboDiscountInfo} onClearCart={handleClearCart} onRemoveItem={handleRemoveItem} />
+                                <StickySidebar 
+                                    summaryItems={summaryItems} 
+                                    total={total} 
+                                    whatsAppMessage={whatsAppMessage} 
+                                    comboDiscountInfo={comboDiscountInfo} 
+                                    onClearCart={handleClearCart} 
+                                    onRemoveItem={handleRemoveItemRequest}
+                                    upgradeComparison={upgradeComparison}
+                                    onAcceptUpgrade={handleUpgradeAccept}
+                                />
                                 {currentNextStepConfig && (
                                     <NextStepButton label={currentNextStepConfig.label} targetName={currentNextStepConfig.targetName} onClick={handleNextStepClick} variant="desktop" />
                                 )}
@@ -521,18 +589,43 @@ const App: React.FC = () => {
                 </div>
             </main>
             
-            {/* Mobile Floating Button - Renderizado condicionalmente apenas quando há um próximo passo */}
+            {showUpgradeModal && (
+                <UpgradeNudgeModal 
+                    plan600={DB.internet.casa.find(p => p.id === 'res-600')!}
+                    plan800={DB.internet.casa.find(p => p.id === 'res-800')!}
+                    onAccept={handleUpgradeAccept}
+                    onDecline={handleUpgradeDecline}
+                />
+            )}
+
+            {itemPendingRemoval && (
+                <RemovalConfirmationModal 
+                    itemName={itemPendingRemoval.name}
+                    onConfirm={confirmRemoval}
+                    onCancel={cancelRemoval}
+                />
+            )}
+
             {showAddons && currentNextStepConfig && (
                 <NextStepButton label={currentNextStepConfig.label} targetName={currentNextStepConfig.targetName} onClick={handleNextStepClick} variant="mobile" />
             )}
 
-            {/* Mobile Bottom Bar */}
             {showAddons && (
                 <MobileBottomBar total={total.promo} itemCount={summaryItems.length} onViewDetails={() => setIsCartOpen(true)} />
             )}
 
             {isCartOpen && (
-                <Summary summaryItems={summaryItems} total={total} whatsAppMessage={whatsAppMessage} onClose={() => setIsCartOpen(false)} onClearCart={handleClearCart} comboDiscountInfo={comboDiscountInfo} onRemoveItem={handleRemoveItem} />
+                <Summary 
+                    summaryItems={summaryItems} 
+                    total={total} 
+                    whatsAppMessage={whatsAppMessage} 
+                    onClose={() => setIsCartOpen(false)} 
+                    onClearCart={handleClearCart} 
+                    comboDiscountInfo={comboDiscountInfo} 
+                    onRemoveItem={handleRemoveItemRequest}
+                    upgradeComparison={upgradeComparison}
+                    onAcceptUpgrade={handleUpgradeAccept}
+                />
             )}
         </div>
     );

@@ -1,3 +1,4 @@
+
 # Entre Combo Builder
 
 Esta é uma aplicação web interativa que permite aos usuários montar e personalizar seu combo ideal de internet, TV e serviços da "Entre". A ferramenta foi projetada para ser intuitiva, guiando o usuário passo a passo na seleção de produtos e culminando em um resumo do pedido pronto para ser enviado via WhatsApp.
@@ -47,6 +48,15 @@ Para que a aplicação funcione corretamente, todas as imagens devem ser salvas 
 | **Logo OMNI**           | `images/omni_logo.png`                  | 200px x 200px (ou proporção quadrada)     |
 | **Logo Watch TV**       | `images/watch_logo.png`                 | 100px x 40px                              |
 | **Imagem NoBreak**      | `images/nobreak_source.png`             | ~200px x 100px (proporcional)             |
+
+### Recursos Empresariais (Business)
+
+Imagens utilizadas nos cards explicativos dos planos empresariais.
+
+| Recurso             | Nome do Arquivo              | Dimensões Recomendadas |
+| ------------------- | ---------------------------- | ---------------------- |
+| Gerência Proativa   | `gerencia_proativa_bg.png`   | 800px x 600px          |
+| IP Fixo             | `ip_fixo_bg.png`             | 800px x 600px          |
 
 ### Imagens dos Planos de TV
 
