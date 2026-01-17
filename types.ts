@@ -84,3 +84,14 @@ export interface UpgradeComparison {
     isCheaper: boolean;
     totalUpgrade: number;
 }
+
+export interface SummaryItem {
+    id: string;
+    type: string;
+    name: string;
+    details?: string;
+    price: number;
+    promoPrice?: number;
+    promo?: string;
+    priceNote?: string;
+}

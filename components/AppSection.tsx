@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useRef } from 'react';
 import { AppCard } from './AppCard';
 import type { AppInfo } from '../types';
@@ -12,23 +11,25 @@ interface AppSectionProps {
 }
 
 const ComboMessage: React.FC<{ hasComboDiscount?: boolean }> = ({ hasComboDiscount }) => {
-    if (hasComboDiscount === true) {
-        return (
-            <div className="text-center mb-8 p-4 bg-green-50 border border-green-200 rounded-lg">
-                <p className="font-bold text-green-700">Desconto de combo ativo!</p>
-            </div>
-        )
-    }
-
-    if (hasComboDiscount === false) {
-        return (
-            <div className="text-center mb-8 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                <p className="font-semibold text-amber-800">Aproveite descontos nos planos a partir de 800 MEGA</p>
-            </div>
-        )
-    }
-    
-    return null;
+    return (
+        <div className="text-center mb-10 p-5 bg-entre-purple-light/30 border-2 border-dashed border-entre-purple-mid/30 rounded-2xl relative overflow-hidden">
+             <div className="absolute -right-8 -top-8 w-24 h-24 bg-entre-orange opacity-10 rounded-full blur-2xl"></div>
+             <div className="absolute -left-8 -bottom-8 w-24 h-24 bg-entre-purple-mid opacity-10 rounded-full blur-2xl"></div>
+             
+             <div className="relative z-10">
+                <span className="inline-block bg-entre-orange text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-2 shadow-sm">
+                    Benefício Exclusivo Entre
+                </span>
+                <p className="text-entre-purple-dark font-black text-xl mb-2 italic leading-tight">
+                    Clientes da Entre têm condições especiais na contratação de aplicativos<br/>
+                    nos combos com os planos de 800 e 920 Mega.
+                </p>
+                <p className="text-sm text-gray-600 font-medium max-w-xl mx-auto leading-relaxed">
+                    Mais velocidade, mais entretenimento e mais economia no valor final do combo.
+                </p>
+             </div>
+        </div>
+    )
 }
 
 // Ordem definida: Disney+ -> HBO Max -> Deezer -> Exit Lag
@@ -52,8 +53,42 @@ export const AppSection: React.FC<AppSectionProps> = ({ apps, selectedApps, onSe
     }, [apps]);
 
     const categories = useMemo(() => {
-        return ['Todos', ...Array.from(new Set(regularApps.map(app => app.category)))];
+        const uniqueCategories = Array.from(new Set(regularApps.map(app => app.category)));
+        
+        const explicitOrder = [
+            'Entretenimento',
+            'Sky',
+            'Música e Áudio',
+            'Infantil',
+            'Educação e Leitura',
+            'Saúde e Bem estar',
+            'Utilidades',
+            'Outros'
+        ];
+
+        const sorted = uniqueCategories.sort((a: string, b: string) => {
+            const indexA = explicitOrder.indexOf(a);
+            const indexB = explicitOrder.indexOf(b);
+            
+            // Se ambos estão na lista, ordena pela lista
+            if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+            // Se apenas A está na lista, A vem antes
+            if (indexA !== -1) return -1;
+            // Se apenas B está na lista, B vem antes
+            if (indexB !== -1) return 1;
+            // Se nenhum está na lista, ordena alfabeticamente
+            return a.localeCompare(b);
+        });
+
+        return ['Todos', ...sorted];
     }, [regularApps]);
+
+    const getCategoryDisplayName = (category: string) => {
+        const map: Record<string, string> = {
+            'Saúde e Bem estar': 'Saúde e Bem-Estar'
+        };
+        return map[category] || category;
+    };
 
     const filteredRegularApps = useMemo(() => {
         if (!selectedCategory || selectedCategory === 'Todos') {
@@ -63,15 +98,27 @@ export const AppSection: React.FC<AppSectionProps> = ({ apps, selectedApps, onSe
     }, [regularApps, selectedCategory]);
     
     const groupedApps = useMemo(() => {
-        return filteredRegularApps.reduce<Record<string, AppInfo[]>>((groups, app) => {
-            const { category } = app;
-            if (!groups[category]) {
-                groups[category] = [];
-            }
-            groups[category].push(app);
-            return groups;
-        }, {});
-    }, [filteredRegularApps]);
+        // Se estamos mostrando "Todos", queremos agrupar pela ordem das categorias
+        const groups: Record<string, AppInfo[]> = {};
+        
+        // Inicializa os grupos na ordem correta
+        categories.filter(c => c !== 'Todos').forEach(cat => {
+             groups[cat] = [];
+        });
+
+        // Preenche os grupos
+        filteredRegularApps.forEach(app => {
+            if (!groups[app.category]) groups[app.category] = [];
+            groups[app.category].push(app);
+        });
+
+        // Remove grupos vazios
+        Object.keys(groups).forEach(key => {
+            if (groups[key].length === 0) delete groups[key];
+        });
+
+        return groups;
+    }, [filteredRegularApps, categories]);
 
     const handleScrollToOtherApps = () => {
         if (otherAppsRef.current) {
@@ -105,21 +152,21 @@ export const AppSection: React.FC<AppSectionProps> = ({ apps, selectedApps, onSe
 
     return (
         <div className="space-y-10">
-            <ComboMessage hasComboDiscount={hasComboDiscount} />
+            <ComboMessage />
 
             {/* Seção de Destaques - Cores Padronizadas Entre */}
             <div className="bg-gradient-to-br from-entre-purple-light/40 to-white p-6 rounded-2xl border border-entre-purple-mid/20 shadow-sm">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <div className="flex items-center gap-2">
                         <span className="bg-entre-orange text-white text-[10px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider shadow-sm">Super Destaque</span>
-                        <h3 className="text-xl font-bold text-entre-purple-dark">Nossos aplicativos favoritos</h3>
+                        <h3 className="text-xl font-bold text-entre-purple-dark">Nossos favoritos com menor preço</h3>
                     </div>
                     
                     <button 
                         onClick={handleScrollToOtherApps}
                         className="text-xs font-bold text-entre-purple-dark bg-white border border-entre-purple-mid shadow-[0_0_12px_rgba(157,78,221,0.4)] hover:shadow-[0_0_16px_rgba(157,78,221,0.6)] hover:-translate-y-0.5 px-5 py-2.5 rounded-full transition-all flex items-center gap-2 group"
                     >
-                        Ver mais Apps
+                        Ver todos os Apps
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 group-hover:translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
@@ -127,7 +174,9 @@ export const AppSection: React.FC<AppSectionProps> = ({ apps, selectedApps, onSe
                 </div>
 
                 {renderAppGrid(featuredApps, true)}
-                <p className="text-center mt-4 text-xs text-entre-purple-mid/70 font-medium">As melhores opções de streaming, games e música para turbinar seu plano.</p>
+                <p className="text-center mt-4 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                    Preços de parceiro garantidos pela Entre.
+                </p>
             </div>
 
             <div className="pt-6" ref={otherAppsRef}>
@@ -145,7 +194,7 @@ export const AppSection: React.FC<AppSectionProps> = ({ apps, selectedApps, onSe
                                     : 'bg-white text-entre-purple-dark border border-entre-purple-mid hover:bg-entre-purple-light'
                                 }`}
                             >
-                                {category}
+                                {getCategoryDisplayName(category)}
                             </button>
                         )
                     })}
@@ -155,12 +204,18 @@ export const AppSection: React.FC<AppSectionProps> = ({ apps, selectedApps, onSe
                     renderAppGrid(filteredRegularApps)
                 ) : (
                     <div className="space-y-10">
-                        {Object.keys(groupedApps).map((category) => (
-                            <div key={category}>
-                                <h3 className="text-2xl font-bold text-entre-purple-mid mb-6 pb-2 border-b border-entre-purple-light">{category}</h3>
-                                {renderAppGrid(groupedApps[category])}
-                            </div>
-                        ))}
+                        {/* Renderiza na ordem definida em categories, excluindo 'Todos' */}
+                        {categories.filter(c => c !== 'Todos').map((category) => {
+                            if (!groupedApps[category] || groupedApps[category].length === 0) return null;
+                            return (
+                                <div key={category}>
+                                    <h3 className="text-2xl font-bold text-entre-purple-mid mb-6 pb-2 border-b border-entre-purple-light">
+                                        {getCategoryDisplayName(category)}
+                                    </h3>
+                                    {renderAppGrid(groupedApps[category])}
+                                </div>
+                            );
+                        })}
                     </div>
                 )}
             </div>

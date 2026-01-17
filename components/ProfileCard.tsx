@@ -17,7 +17,6 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ profile, planType, isS
     const isStreamingProfile = profile.id === 'profile-streaming';
 
     // Estado para controlar qual app está selecionado (apenas para streaming)
-    // Inicializa com o primeiro app da lista
     const [selectedAppId, setSelectedAppId] = useState<string | null>(
         profile.config.appIds && profile.config.appIds.length > 0 ? profile.config.appIds[0] : null
     );
@@ -29,28 +28,14 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ profile, planType, isS
         }
     }, [profile.id]);
 
-    // Lógica para calcular os preços baseados na configuração do perfil
     const prices = useMemo(() => {
-        // Preços fixos manuais para perfis específicos (fallback)
-        if (planType === 'casa') {
-            // Combo Music: 89.90 (Internet) + 10.00 (Deezer Standard) = 99.90
-            // Valor fixo permanente
-            if (profile.id === 'profile-music') return { current: 99.90, full: 124.90 }; // Full price apenas para ancora
-            
-            // Combo Gamer: 89.90 (Internet) + 10.00 (ExitLag Standard) + 8.00 (Omni Cabo) = 107.90
-            if (profile.id === 'profile-gamer') return { current: 107.90, full: 132.90 };
-            
-            // Combo Streaming: 89.90 (Internet) + 30.00 (HBO/Disney Premium) = 119.90
-            if (profile.id === 'profile-streaming' && !isStreamingProfile) return { current: 119.90, full: 144.90 }; 
-        }
-
         const internet = DB.internet[planType].find(p => p.id === profile.config.internetId);
-        if (!internet) return { current: 0, full: 0 };
+        if (!internet) return { current: 0, full: 0, hasPromo: false };
 
         let current = internet.price;
         let full = internet.fullPrice || internet.price;
+        const hasPromo = !!internet.fullPrice;
 
-        // Se for Streaming, soma APENAS o app selecionado
         if (isStreamingProfile && selectedAppId) {
             const app = DB.apps.find(a => a.id === selectedAppId);
             if (app) {
@@ -58,7 +43,6 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ profile, planType, isS
                 full += app.comboPrice;
             }
         } else {
-            // Comportamento padrão: Soma todos os apps (ex: Família, Gamer)
             profile.config.appIds?.forEach(id => {
                 const app = DB.apps.find(a => a.id === id);
                 if (app) {
@@ -76,13 +60,11 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ profile, planType, isS
             }
         }
 
-        return { current, full };
+        return { current, full, hasPromo };
     }, [profile, planType, isStreamingProfile, selectedAppId]);
 
-    // Manipulador de clique no botão principal "Contratar"
     const handleMainClick = () => {
         if (isStreamingProfile && selectedAppId) {
-            // Cria uma cópia do perfil apenas com o app selecionado
             const modifiedProfile: Profile = {
                 ...profile,
                 config: {
@@ -96,7 +78,6 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ profile, planType, isS
         }
     };
 
-    // Função auxiliar para garantir os nomes corretos das imagens
     const getLogoUrl = (appId: string, appName: string): string => {
         const manualMap: Record<string, string> = {
             'app-deezer': 'deezer_logo.png',
@@ -128,11 +109,18 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ profile, planType, isS
 
     return (
         <div
-            className={`flex flex-col h-full rounded-[2rem] overflow-hidden transition-all duration-300 shadow-xl w-full text-center border-4 ${
+            className={`flex flex-col h-full rounded-[2rem] overflow-hidden transition-all duration-300 shadow-xl w-full text-center border-4 relative ${
                 isSelected ? 'border-entre-purple-mid ring-4 ring-entre-purple-mid/20 transform -translate-y-2' : 'border-transparent hover:-translate-y-2'
             }`}
         >
-            {/* Cabeçalho - Altura reduzida para diminuir espaço negativo */}
+            {/* Social Proof Badge for Profiles */}
+            {profile.isPopular && !isSelected && (
+                <div className="absolute top-2 right-4 bg-entre-orange text-white text-[9px] font-black px-3 py-1 rounded-full shadow-lg z-20 uppercase tracking-widest animate-bounce">
+                    Líder de Vendas
+                </div>
+            )}
+
+            {/* Cabeçalho */}
             <div className="bg-entre-purple-light h-28 flex items-center justify-center px-4 shrink-0">
                 <h3 className="text-2xl font-black text-entre-purple-dark uppercase tracking-tight leading-tight">
                     {profile.name}
@@ -142,7 +130,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ profile, planType, isS
             {/* Conteúdo - Roxo Escuro */}
             <div className="bg-entre-purple-dark p-5 pb-6 flex flex-col flex-grow items-center text-white relative">
                 
-                {/* Indicadores - Atualizado com ícone Wifi e texto unificado */}
+                {/* Indicadores */}
                 <div className="flex items-center justify-center gap-3 mb-5 w-full bg-white/10 border border-white/10 py-2.5 rounded-xl shadow-inner backdrop-blur-sm shrink-0">
                      <div className="flex items-center gap-2">
                         <svg className="w-5 h-5 text-entre-purple-light" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -174,10 +162,9 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ profile, planType, isS
                             const logoUrl = getLogoUrl(app.id, app.name);
                             const isActive = isStreamingProfile ? selectedAppId === appId : true;
 
-                            // Handler específico para clique no ícone do app
                             const handleAppClick = (e: React.MouseEvent) => {
                                 if (isStreamingProfile) {
-                                    e.stopPropagation(); // Evita disparar seleção do card inteiro se não desejado, ou mantemos.
+                                    e.stopPropagation();
                                     setSelectedAppId(appId);
                                 }
                             };
@@ -217,7 +204,6 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ profile, planType, isS
 
                 {/* Preços e Tags */}
                 <div className="mt-auto w-full">
-                    {/* Tag Gamer - Espaço reservado ajustado */}
                     <div className="h-7 flex items-center justify-center mb-1">
                         {profile.id === 'profile-gamer' && (
                             <span className="bg-entre-orange text-white text-[9px] font-black px-3 py-1 rounded-full shadow-lg uppercase tracking-tighter">
@@ -226,13 +212,18 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ profile, planType, isS
                         )}
                     </div>
                     
-                    <div className="mb-5">
+                    <div className="mb-5 flex flex-col items-center">
                         <div className="relative inline-block">
                             <p className="text-4xl font-black leading-none tracking-tighter">
                                 {formatCurrency(prices.current).split(',')[0]}<span className="text-xl">,{formatCurrency(prices.current).split(',')[1]}</span>
-                                <span className="text-base font-bold ml-1">/mês</span>
+                                <span className="text-base font-bold ml-1">/mês*</span>
                             </p>
                         </div>
+                        {prices.hasPromo && (
+                            <p className="text-[10px] text-white/60 font-medium mt-1">
+                                *Nos primeiros 3 meses, após {formatCurrency(prices.full)}/mês
+                            </p>
+                        )}
                     </div>
 
                     <button 

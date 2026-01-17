@@ -14,7 +14,7 @@ import { NextStepButton } from './components/NextStepButton';
 import { StepsProgressBar } from './components/StepsProgressBar';
 import { BusinessFeaturesExplanation } from './components/BusinessFeaturesExplanation';
 import { DB, PROFILES } from './data/products';
-import type { PlanType, CartState, InternetPlan, AppInfo, OmniPlan, NoBreakPlan, Profile, UpgradeComparison } from './types';
+import type { PlanType, CartState, InternetPlan, AppInfo, OmniPlan, NoBreakPlan, Profile, UpgradeComparison, SummaryItem } from './types';
 import { formatCurrency } from './utils/formatters';
 import { ProfileSelector } from './components/ProfileSelector';
 import { UpgradeNudgeModal } from './components/UpgradeNudgeModal';
@@ -310,7 +310,7 @@ const App: React.FC = () => {
 
         let promoTotal = 0;
         let fullTotal = 0;
-        const items: { id: string; type: string; name: string; details?: string; price: number; promoPrice?: number; priceNote?: string; promo?: string; }[] = [];
+        const items: SummaryItem[] = [];
         let message = `Olá Entre! Tenho interesse em contratar o seguinte pedido:\n\n`;
         
         const hasComboDiscount = cart.internet.comboDiscount ?? false;

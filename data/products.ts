@@ -28,11 +28,12 @@ export const PROFILES: Record<PlanType, Profile[]> = {
         {
             id: 'profile-gamer',
             name: 'Combo GAMER',
-            description: 'Performance máxima com Exit Lag.',
+            description: 'Performance máxima com Exit Lag e conexão via cabo para menor latência.',
             icon: 'gamer',
             config: {
                 internetId: 'res-800',
                 appIds: ['app-exitlag'],
+                omniId: 'omni-cabo' // Adicionado ponto cabo conforme solicitado
             }
         },
         {
@@ -43,7 +44,8 @@ export const PROFILES: Record<PlanType, Profile[]> = {
             config: {
                 internetId: 'res-800',
                 appIds: ['app-hbo-noads', 'app-disney-noads'],
-            }
+            },
+            isPopular: true // Gatilho de Prova Social
         },
     ],
     empresa: [] // Perfis empresariais removidos conforme solicitado
@@ -73,15 +75,16 @@ export const DB: DbData = {
             { 
                 id: 'res-800', 
                 name: '800 Mega', 
-                description: 'Ideal para multiacessos, jogos, trabalho remoto e streaming',
+                description: 'Ideal para multiacessos de jogos, trabalho remoto e streaming',
                 features: ['Instalação Gratuita¹', 'Wifi 6 (mais estável)', 'Upload 400 Mega'],
-                price: 94.90,
+                price: 94.90, 
                 fullPrice: 119.90, 
                 priceDetails: 'R$94,90', 
                 originalPrice: 'de: R$119,90', 
-                promo: '*Nos primeiros 3 meses, após R$119,90', // Texto atualizado
+                promo: '*Nos primeiros 3 meses, após R$119,90/mês', 
                 bestOffer: true, 
-                comboDiscount: true 
+                comboDiscount: true,
+                isPopular: true 
             },
             { 
                 id: 'res-920', 
@@ -124,8 +127,7 @@ export const DB: DbData = {
                 description: 'A solução mais completa para máxima performance e conectividade total.',
                 features: ['Instalação Gratuita¹', '2 pontos Wifi 6 (mais estável)', 'Upload simétrico', 'Gerência Proativa²', 'IP Fixo³'],
                 price: 319.90, 
-                priceDetails: 'R$319,90', 
-                bestOffer: true 
+                priceDetails: 'R$319,90'
             }
         ]
     },
@@ -136,46 +138,46 @@ export const DB: DbData = {
         { id: 'tv-premium', name: 'Premium', details: '55+ canais com Paramount+, Telecine e Premiere', price: 90.00, comboPrice: 80.00 }
     ],
     apps: [
-        { id: 'app-deezer', name: 'Deezer', tier: 'Standard', category: 'Música', details: 'Streaming de música e podcasts com playlists, rádios e recomendações personalizadas.', price: 20, comboPrice: 10 },
-        { id: 'app-sky-light', name: 'Sky+ Light', tier: 'Standard', category: 'Sky', details: '13 canais abertos ao vivo.', price: 20, comboPrice: 10 },
-        { id: 'app-looke', name: 'Looke', tier: 'Standard', category: 'Séries e Filmes', details: 'Streaming brasileiro com filmes, séries e área infantil (Looke Kids).', price: 20, comboPrice: 10 },
+        { id: 'app-deezer', name: 'Deezer', tier: 'Standard', category: 'Música e Áudio', details: 'Streaming de música e podcasts com playlists, rádios e recomendações personalizadas.', price: 20, comboPrice: 10 },
+        { id: 'app-sky-light', name: 'Sky+ Light', tier: 'Standard', category: 'Sky', details: '15 canais abertos ao vivo.', price: 20, comboPrice: 10 },
+        { id: 'app-looke', name: 'Looke', tier: 'Standard', category: 'Entretenimento', details: 'Streaming brasileiro com filmes, séries e área infantil (Looke Kids).', price: 20, comboPrice: 10 },
         { id: 'app-kiddle-1', name: 'Kiddle Pass 1 usuário', tier: 'Standard', category: 'Infantil', details: 'Plataforma de experiências educacionais ao vivo e em vídeo para crianças até 12 anos.', price: 20, comboPrice: 10 },
         { id: 'app-nutri', name: '+QNutri', tier: 'Standard', category: 'Saúde e Bem estar', details: 'Aplicativo de acompanhamento nutricional e bem‑estar (curadoria e planos alimentares).', price: 20, comboPrice: 10 },
-        { id: 'app-kaspersky-1', name: 'Kaspersky Standard (1 licença)', tier: 'Standard', category: 'Segurança Digital', details: 'Antivírus e proteção essencial com navegação segura e recursos básicos.', price: 20, comboPrice: 10 },
-        { id: 'app-exitlag', name: 'Exit Lag', tier: 'Standard', category: 'Games', details: 'Otimizador de rotas para jogos online que reduz lag, perda de pacotes e jitter.', price: 20, comboPrice: 10 },
+        { id: 'app-kaspersky-1', name: 'Kaspersky Standard (1 licença)', tier: 'Standard', category: 'Utilidades', details: 'Antivírus e proteção essencial com navegação segura e recursos básicos.', price: 20, comboPrice: 10 },
+        { id: 'app-exitlag', name: 'Exit Lag', tier: 'Standard', category: 'Utilidades', details: 'Otimizador de rotas para jogos online que reduz lag, perda de pacotes e jitter.', price: 20, comboPrice: 10 },
         { id: 'app-playkids', name: 'PlayKids+', tier: 'Standard', category: 'Infantil', details: 'Plataforma infantil segura com desenhos, jogos educativos e livros digitais.', price: 20, comboPrice: 10 },
-        { id: 'app-hubvantagens', name: 'Hub Vantagens', tier: 'Standard', category: 'Descontos', details: 'Clube de benefícios com cupons, descontos em marcas parceiras e cashback.', price: 20, comboPrice: 10 },
-        { id: 'app-ubook', name: 'Ubook Plus', tier: 'Standard', category: 'Educação e Leitura', details: 'App de audiolivros, e‑books, podcasts e revistas em um só catálogo.', price: 20, comboPrice: 10 },
+        { id: 'app-hubvantagens', name: 'Hub Vantagens', tier: 'Standard', category: 'Outros', details: 'Clube de benefícios com cupons, descontos em marcas parceiras e cashback.', price: 20, comboPrice: 10 },
+        { id: 'app-ubook', name: 'Ubook Plus', tier: 'Standard', category: 'Música e Áudio', details: 'App de audiolivros, e‑books, podcasts e revistas em um só catálogo.', price: 20, comboPrice: 10 },
         { id: 'app-estuda', name: 'Estuda+', tier: 'Standard', category: 'Educação e Leitura', details: 'App educacional com apostilas em áudio e materiais para reforço e vestibulares.', price: 20, comboPrice: 10 },
         { id: 'app-pequenosleitores', name: 'Pequenos Leitores', tier: 'Standard', category: 'Infantil', details: 'Biblioteca infantil com ebooks e audiobooks selecionados por faixa etária.', price: 20, comboPrice: 10 },
         { id: 'app-fluid', name: 'Fluid', tier: 'Standard', category: 'Saúde e Bem estar', details: 'App de bem‑estar com yoga, meditação guiada, respiração e sons relaxantes.', price: 20, comboPrice: 10 },
         { id: 'app-socialcomics', name: 'Social Comics', tier: 'Standard', category: 'Educação e Leitura', details: 'Streaming de HQs e quadrinhos digitais com catálogo atualizado diariamente.', price: 20, comboPrice: 10 },
         { id: 'app-revistaria', name: 'Revistaria', tier: 'Standard', category: 'Educação e Leitura', details: 'Banca digital com acesso a revistas brasileiras em formato digital/PDF.', price: 20, comboPrice: 10 },
-        { id: 'app-playlist', name: 'Playlist', tier: 'Standard', category: 'Música', details: 'A plataforma oferece mais de 100 playlists de diversos gêneros e estilos musicais, todas elaboradas por profissionais do mercado. Os usuários também podem ouvir a rádio streaming, com músicas, notícias e entrevistas 24 horas por dia', price: 20, comboPrice: 10 },
-        { id: 'app-sky-light-globo', name: 'Sky+ Light (Globo)', tier: 'Advanced', category: 'Sky', details: '14 canais abertos ao vivo incluindo Globo local.', price: 25, comboPrice: 15 },
+        { id: 'app-playlist', name: 'Playlist', tier: 'Standard', category: 'Música e Áudio', details: 'A plataforma oferece mais de 100 playlists de diversos gêneros e estilos musicais, todas elaboradas por profissionais do mercado. Os usuários também podem ouvir a rádio streaming, com músicas, notícias e entrevistas 24 horas por dia', price: 20, comboPrice: 10 },
+        { id: 'app-sky-light-globo', name: 'Sky+ Light (Globo)', tier: 'Advanced', category: 'Sky', details: '16 canais abertos ao vivo incluindo Globo local.', price: 25, comboPrice: 15 },
         { id: 'app-kiddle-2', name: 'Kiddle Pass 2 usuários', tier: 'Advanced', category: 'Infantil', details: 'Plataforma de atividades educacionais e de lazer para crianças, ao vivo e em vídeo.', price: 25, comboPrice: 15 },
-        { id: 'app-kaspersky-3', name: 'Kaspersky Standard (3 licenças)', tier: 'Advanced', category: 'Segurança Digital', details: 'Antivírus e proteção essencial com navegação segura e recursos básicos.', price: 25, comboPrice: 15 },
-        { id: 'app-curtaon', name: 'Curta ON', tier: 'Advanced', category: 'Séries e Filmes', details: 'Streaming do Canal Curta! com documentários e séries sobre artes e humanidades.', price: 25, comboPrice: 15 },
+        { id: 'app-kaspersky-3', name: 'Kaspersky Standard (3 licenças)', tier: 'Advanced', category: 'Utilidades', details: 'Antivírus e proteção essencial com navegação segura e recursos básicos.', price: 25, comboPrice: 15 },
+        { id: 'app-curtaon', name: 'Curta ON', tier: 'Advanced', category: 'Outros', details: 'Streaming do Canal Curta! com documentários e séries sobre artes e humanidades.', price: 25, comboPrice: 15 },
         { id: 'app-ojornalista', name: 'O Jornalista', tier: 'Advanced', category: 'Educação e Leitura', details: 'App para ler e ouvir jornais, revistas e podcasts de notícias brasileiros.', price: 25, comboPrice: 15 },
-        { id: 'app-sky-light-amazon', name: 'Sky+ Light (Amazon)', tier: 'Top', category: 'Sky', details: '14 canais ao vivo incluindo Globo local e acesso aos benefícios da Amazon: Prime Vídeos, Prime Music e Amazon Prime.', price: 35, comboPrice: 25 },
-        { id: 'app-disney-ads', name: 'Disney+ (com anúncio)', tier: 'Top', category: 'Séries e Filmes', details: 'Streaming da Disney com anúncios; catálogo Disney, Pixar, Marvel, Star Wars e NatGeo.', price: 35, comboPrice: 25 },
-        { id: 'app-hbo-ads', name: 'HBO Max (com anúncio)', tier: 'Top', category: 'Séries e Filmes', details: 'Todo conteúdo da HBO, Universo DC, Harry Potter e outras histórias imperdíveis, além de esportes ao vivo (com anúncios)', price: 35, comboPrice: 25 },
-        { id: 'app-cindie', name: 'C Indie', tier: 'Top', category: 'Séries e Filmes', details: 'Cindie: streaming de cinema e séries independentes, curadoria internacional.', price: 35, comboPrice: 25 },
+        { id: 'app-sky-light-amazon', name: 'Sky+ Light (Amazon)', tier: 'Top', category: 'Sky', details: '16 canais ao vivo incluindo Globo local e acesso aos benefícios da Amazon: Prime Vídeos, Prime Music e Amazon Prime.', price: 35, comboPrice: 25 },
+        { id: 'app-disney-ads', name: 'Disney+ (com anúncio)', tier: 'Top', category: 'Entretenimento', details: 'Streaming da Disney com anúncios; catálogo Disney, Pixar, Marvel, Star Wars e NatGeo.', price: 35, comboPrice: 25 },
+        { id: 'app-hbo-ads', name: 'HBO Max (com anúncio)', tier: 'Top', category: 'Entretenimento', details: 'Todo conteúdo da HBO, Universo DC, Harry Potter e outras histórias imperdíveis, além de esportes ao vivo (com anúncios)', price: 35, comboPrice: 25 },
+        { id: 'app-cindie', name: 'C Indie', tier: 'Top', category: 'Outros', details: 'Cindie: streaming de cinema e séries independentes, curadoria internacional.', price: 35, comboPrice: 25 },
         { id: 'app-leitura360', name: 'Leitura 360', tier: 'Top', category: 'Educação e Leitura', details: 'Plataforma de leitura multimídia com audiolivros e revistas', price: 35, comboPrice: 25 },
-        { id: 'app-disney-noads', name: 'Disney+', tier: 'Premium', category: 'Séries e Filmes', details: 'Streaming da Disney sem anúncios em planos elegíveis; filmes e séries Disney, Pixar, Marvel, Star Wars e NatGeo.', price: 40, comboPrice: 30 },
-        { id: 'app-hbo-noads', name: 'HBO Max', tier: 'Premium', category: 'Séries e Filmes', details: 'Todo conteúdo da HBO, Universo DC, Harry Potter e outras histórias imperdíveis, além de esportes ao vivo (sem anúncios)', price: 40, comboPrice: 30 },
-        { id: 'app-kaspersky-plus', name: 'Kaspersky Plus (5 licenças)', tier: 'Premium', category: 'Segurança Digital', details: 'Segurança avançada com antivírus e extras como VPN e monitoramento adicional.', price: 40, comboPrice: 30 },
+        { id: 'app-disney-noads', name: 'Disney+', tier: 'Premium', category: 'Entretenimento', details: 'Streaming da Disney sem anúncios; filmes e séries Disney, Pixar, Marvel, Star Wars e NatGeo.', price: 40, comboPrice: 30 },
+        { id: 'app-hbo-noads', name: 'HBO Max', tier: 'Premium', category: 'Entretenimento', details: 'Todo conteúdo da HBO, Universo DC, Harry Potter e outras histórias imperdíveis, além de esportes ao vivo (sem anúncios)', price: 40, comboPrice: 30 },
+        { id: 'app-kaspersky-plus', name: 'Kaspersky Plus (5 licenças)', tier: 'Premium', category: 'Utilidades', details: 'Segurança avançada com antivírus e extras como VPN e monitoramento adicional.', price: 40, comboPrice: 30 },
         { id: 'app-smartcontent', name: 'Smart Content', tier: 'Premium', category: 'Educação e Leitura', details: 'App de aprendizado rápido com resumos, videos e áudios curados sobre inovação e negócios.', price: 40, comboPrice: 30 },
         { id: 'app-queimadiaria', name: 'Queima Diária', tier: 'Premium', category: 'Saúde e Bem estar', details: 'App de treinos em casa focado em queima de gordura abdominal e condicionamento.', price: 40, comboPrice: 30 },
         { id: 'app-zen', name: 'Zen', tier: 'Premium', category: 'Saúde e Bem estar', details: 'App de meditação e sono com conteúdos para ansiedade, sono e bem‑estar.', price: 40, comboPrice: 30 },
-        { id: 'app-sky-full', name: 'Sky+ Full', tier: 'Sky Full', category: 'Sky', details: '90 canais ao vivo.', price: 89.90, comboPrice: 89.90 }
+        { id: 'app-sky-full', name: 'Sky+ Full', tier: 'Sky Full', category: 'Sky', details: '91 canais ao vivo incluindo canais fechados.', price: 89.90, comboPrice: 89.90 }
     ],
     omni: [
-        { id: 'omni-cabo', name: 'OMNI CABO', details: 'Ponto adicional cabeado', price: 8.00 },
-        { id: 'omni-5', name: 'OMNI WIFI 5', details: 'Ponto adicional Wi-Fi 5', price: 26.00 },
-        { id: 'omni-6', name: 'OMNI WIFI 6', details: 'Ponto adicional Wi-Fi 6', price: 32.00 }
+        { id: 'omni-cabo', name: 'OMNI LAN CABO', details: 'Ponto adicional cabeado', price: 8.00, installationDetails: '+ Instalação: R$40/ponto + R$6/m cabo' },
+        { id: 'omni-5', name: 'OMNI WiFi 5', details: 'Ponto adicional Wi-Fi 5', price: 26.00, installationDetails: '+ Instalação: R$40/ponto + R$6/m cabo' },
+        { id: 'omni-6', name: 'OMNI WiFi 6', details: 'Ponto adicional Wi-Fi 6', price: 32.00, installationDetails: '+ Instalação: R$40/ponto + R$6/m cabo' }
     ],
     nobreak: {
-        id: 'nobreak', name: 'Mini NoBreak', details: 'Aluguel do equipamento', price: 18.00
+        id: 'nobreak', name: 'Mini No-Break', details: 'Aluguel do equipamento', price: 18.00
     }
 };
