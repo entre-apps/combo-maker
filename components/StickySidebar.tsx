@@ -2,6 +2,7 @@
 import React from 'react';
 import { formatCurrency } from '../utils/formatters';
 import type { UpgradeComparison, SummaryItem } from '../types';
+import { telemetry } from '../utils/telemetry';
 
 interface StickySidebarProps {
     summaryItems: SummaryItem[];
@@ -33,6 +34,10 @@ const LightbulbIcon = () => (
 export const StickySidebar: React.FC<StickySidebarProps> = ({ summaryItems, total, whatsAppMessage, comboDiscountInfo, onClearCart, onRemoveItem, upgradeComparison, onAcceptUpgrade }) => {
     
     const handleWhatsAppClick = () => {
+        telemetry.track({ 
+            type: 'conversion_initiated', 
+            payload: { totalFull: total.full, totalPromo: total.promo, itemsCount: summaryItems.length } 
+        });
         const phoneNumber = '5522974001553';
         const encodedMessage = encodeURIComponent(whatsAppMessage);
         const url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
@@ -42,7 +47,6 @@ export const StickySidebar: React.FC<StickySidebarProps> = ({ summaryItems, tota
     const isDisabled = summaryItems.length === 0;
     const dailyPrice = total.full / 30;
     
-    // Identifica se é um plano que não deve mostrar valor por dia
     const isLowTierPlan = summaryItems.some(item => item.id === 'res-500' || item.id === 'res-600');
 
     return (
@@ -95,7 +99,6 @@ export const StickySidebar: React.FC<StickySidebarProps> = ({ summaryItems, tota
                     )}
                 </div>
 
-                {/* COMPARATIVO DE UPGRADE (Gatilho de Decisão Inteligente) */}
                 {upgradeComparison?.show && (
                     <div className="mb-6 bg-gradient-to-br from-entre-purple-light/50 to-white border-2 border-entre-purple-mid/30 rounded-2xl p-4 shadow-sm relative overflow-hidden group">
                         <div className="absolute -right-4 -top-4 w-12 h-12 bg-entre-orange/10 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>

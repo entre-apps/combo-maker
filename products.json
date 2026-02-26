@@ -401,6 +401,15 @@
         "comboPrice": 25
       },
       {
+        "id": "app-apple-tv",
+        "name": "Apple TV+",
+        "tier": "Top",
+        "category": "Séries e Filmes",
+        "details": "O melhor do cinema e das séries originais Apple. Histórias premiadas, dramas envolventes, documentários inovadores e muito mais.",
+        "price": 35,
+        "comboPrice": 25
+      },
+      {
         "id": "app-cindie",
         "name": "C Indie",
         "tier": "Top",

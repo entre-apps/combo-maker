@@ -2,13 +2,13 @@
 import React from 'react';
 import { formatCurrency } from '../utils/formatters';
 import type { UpgradeComparison, SummaryItem } from '../types';
+import { telemetry } from '../utils/telemetry';
 
 interface SummaryProps {
     summaryItems: SummaryItem[];
     total: { promo: number; full: number; };
     whatsAppMessage: string;
     onClose: () => void;
-    onClearCart: () => void;
     onRemoveItem: (type: string, id?: string) => void;
     comboDiscountInfo: {
         isActive: boolean;
@@ -40,6 +40,10 @@ const LightbulbIcon = () => (
 export const Summary: React.FC<SummaryProps> = ({ summaryItems, total, whatsAppMessage, onClose, onRemoveItem, comboDiscountInfo, upgradeComparison, onAcceptUpgrade }) => {
 
     const handleWhatsAppClick = () => {
+        telemetry.track({ 
+            type: 'conversion_initiated', 
+            payload: { totalFull: total.full, totalPromo: total.promo, itemsCount: summaryItems.length } 
+        });
         const phoneNumber = '5522974001553';
         const encodedMessage = encodeURIComponent(whatsAppMessage);
         const url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
@@ -93,7 +97,6 @@ export const Summary: React.FC<SummaryProps> = ({ summaryItems, total, whatsAppM
                                             
                                             {item.type !== 'internet' && (
                                                 <button 
-                                                    // FIX: Changed 'id' to 'item.id' to correctly reference the item ID in the removal function.
                                                     onClick={() => onRemoveItem(item.type, item.id)}
                                                     className="mt-2 text-sm text-red-400 hover:text-red-600 flex items-center gap-1 transition-colors"
                                                 >
@@ -110,7 +113,6 @@ export const Summary: React.FC<SummaryProps> = ({ summaryItems, total, whatsAppM
                         )}
                     </div>
 
-                    {/* COMPARATIVO DE UPGRADE NO RESUMO */}
                     {upgradeComparison?.show && (
                         <div className="my-6 bg-gradient-to-br from-entre-purple-light/40 to-white border-2 border-entre-purple-mid/20 rounded-2xl p-6 shadow-sm">
                             <div className="flex items-center gap-3 mb-3">

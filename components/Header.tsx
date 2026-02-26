@@ -1,11 +1,35 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+    onLogoClick?: () => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({ onLogoClick }) => {
+    const [clickCount, setClickCount] = useState(0);
+
+    const handleLogoClick = () => {
+        const newCount = clickCount + 1;
+        setClickCount(newCount);
+        
+        // Se clicar 5 vezes rápidas no logo, abre a telemetria
+        if (newCount >= 5 && onLogoClick) {
+            onLogoClick();
+            setClickCount(0);
+        }
+
+        // Reseta o contador após 3 segundos
+        setTimeout(() => setClickCount(0), 3000);
+    };
+
     return (
         <header className="bg-white shadow-sm sticky top-0 z-40">
             <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-                <div>
+                <div 
+                    onClick={handleLogoClick}
+                    className="cursor-default select-none transition-transform active:scale-95"
+                    title="Entre Combo Builder"
+                >
                     <img src="/images/entre_logo.png" alt="Logo da Entre" className="w-[100px] h-10" />
                 </div>
                 <a 

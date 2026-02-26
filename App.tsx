@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo, useCallback, useRef } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { Header } from './components/Header';
 import { PlanTypeSelector } from './components/PlanTypeSelector';
 import { Section } from './components/Section';
@@ -19,6 +19,8 @@ import { formatCurrency } from './utils/formatters';
 import { ProfileSelector } from './components/ProfileSelector';
 import { UpgradeNudgeModal } from './components/UpgradeNudgeModal';
 import { RemovalConfirmationModal } from './components/RemovalConfirmationModal';
+import { telemetry } from './utils/telemetry';
+import { TelemetryDashboard } from './components/TelemetryDashboard';
 
 type StepName = 'internet' | 'omni' | 'nobreak' | 'apps' | 'checkout';
 type InternetViewMode = 'plans' | 'combos';
@@ -49,14 +51,17 @@ const App: React.FC = () => {
     const [selectedProfileId, setSelectedProfileId] = useState<string | null>(null);
     const [showUpgradeModal, setShowUpgradeModal] = useState(false);
     const [itemPendingRemoval, setItemPendingRemoval] = useState<PendingRemoval | null>(null);
+    const [showTelemetry, setShowTelemetry] = useState(false);
     
     const [internetViewMode, setInternetViewMode] = useState<InternetViewMode>('combos');
-    const [nextStepId, setNextStepId] = useState<StepName>('internet');
+    const [activeSection, setActiveSection] = useState<StepName>('internet');
+    const lastTrackedStep = useRef<StepName | null>(null);
 
     const internetRef = useRef<HTMLDivElement>(null);
-    const appsRef = useRef<HTMLDivElement>(null);
     const omniRef = useRef<HTMLDivElement>(null);
     const nobreakRef = useRef<HTMLDivElement>(null);
+    const appsRef = useRef<HTMLDivElement>(null);
+    const checkoutMarkerRef = useRef<HTMLDivElement>(null);
     const profileSelectorRef = useRef<HTMLDivElement>(null);
 
     const sectionsRef = useMemo(() => ({
@@ -69,6 +74,14 @@ const App: React.FC = () => {
 
     const isBusiness = cart.planType === 'empresa';
 
+    const nextStepId = useMemo((): StepName => {
+        if (activeSection === 'internet') return 'omni';
+        if (activeSection === 'omni') return 'nobreak';
+        if (activeSection === 'nobreak') return isBusiness ? 'checkout' : 'apps';
+        if (activeSection === 'apps') return 'checkout';
+        return 'checkout';
+    }, [activeSection, isBusiness]);
+
     const currentNextStepConfig = useMemo((): NextStepConfig | null => {
         switch (nextStepId) {
             case 'omni':
@@ -76,14 +89,13 @@ const App: React.FC = () => {
             case 'nobreak':
                 return { targetRef: sectionsRef.nobreak, label: 'Proteção Elétrica', targetName: 'Mini No-Break', stepId: 'nobreak' };
             case 'apps':
-                if (isBusiness) return null;
                 return { targetRef: sectionsRef.apps, label: 'Conteúdo Digital', targetName: 'Apps', stepId: 'apps' };
             case 'checkout':
                 return null;
             default:
                 return { targetRef: sectionsRef.internet, label: 'Internet', targetName: 'Planos', stepId: 'internet' };
         }
-    }, [nextStepId, sectionsRef, isBusiness]);
+    }, [nextStepId, sectionsRef]);
 
     const handleScrollTo = useCallback((ref: React.RefObject<HTMLElement>) => {
         const headerOffset = 100;
@@ -102,14 +114,71 @@ const App: React.FC = () => {
         if (currentNextStepConfig?.targetRef) {
             handleScrollTo(currentNextStepConfig.targetRef);
             
-            if (nextStepId === 'internet') setNextStepId('omni');
-            else if (nextStepId === 'omni') setNextStepId('nobreak');
-            else if (nextStepId === 'nobreak') {
-                setNextStepId(isBusiness ? 'checkout' : 'apps');
-            }
-            else if (nextStepId === 'apps') setNextStepId('checkout');
+            // Avanço manual imediato para melhorar a percepção de resposta
+            setActiveSection(nextStepId);
         }
-    }, [currentNextStepConfig, handleScrollTo, nextStepId, isBusiness]);
+    }, [currentNextStepConfig, handleScrollTo, nextStepId]);
+
+    const showAddons = !!cart.internet;
+
+    // Intersection Observer para detectar a seção ativa e atualizar o botão/telemetria
+    useEffect(() => {
+        // Se não houver plano selecionado, não há o que observar
+        if (!cart.planType) return;
+
+        const observerOptions = {
+            root: null,
+            // Define uma "linha de chegada" no centro da tela (zona de 10% de altura)
+            // Qualquer seção que cruzar essa linha é considerada a ativa
+            rootMargin: '-45% 0px -45% 0px', 
+            threshold: 0
+        };
+
+        const observerCallback = (entries: IntersectionObserverEntry[]) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const sectionId = entry.target.getAttribute('data-section') as StepName;
+                    if (sectionId) {
+                        setActiveSection(sectionId);
+
+                        // Telemetria
+                        if (lastTrackedStep.current !== sectionId) {
+                            telemetry.track({ 
+                                type: 'step_navigation', 
+                                payload: { from: lastTrackedStep.current || 'start', to: sectionId } 
+                            });
+                            lastTrackedStep.current = sectionId;
+                        }
+                    }
+                }
+            });
+        };
+
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+        // Pequeno delay para garantir que o DOM foi atualizado após a seleção do plano
+        const timeoutId = setTimeout(() => {
+            const refs = [
+                { id: 'internet', ref: internetRef },
+                { id: 'omni', ref: omniRef },
+                { id: 'nobreak', ref: nobreakRef },
+                { id: 'apps', ref: appsRef },
+                { id: 'checkout', ref: checkoutMarkerRef }
+            ];
+
+            refs.forEach(({ id, ref }) => {
+                if (ref.current) {
+                    ref.current.setAttribute('data-section', id);
+                    observer.observe(ref.current);
+                }
+            });
+        }, 100);
+
+        return () => {
+            observer.disconnect();
+            clearTimeout(timeoutId);
+        };
+    }, [cart.planType, showAddons, isBusiness]);
 
     const resetCartAddons = () => ({
         tv: null,
@@ -119,6 +188,7 @@ const App: React.FC = () => {
     });
 
     const handleSelectPlanType = useCallback((type: PlanType) => {
+        telemetry.track({ type: 'plan_type_selected', payload: { planType: type } });
         setSelectedProfileId(null);
         setInternetViewMode(PROFILES[type]?.length > 0 ? 'combos' : 'plans');
         setCart({
@@ -126,7 +196,7 @@ const App: React.FC = () => {
             ...resetCartAddons(),
             internet: null,
         });
-        setNextStepId('internet');
+        setActiveSection('internet');
         
         setTimeout(() => {
             if (sectionsRef.internet.current) {
@@ -136,6 +206,7 @@ const App: React.FC = () => {
     }, [handleScrollTo, sectionsRef]);
 
     const handleSelectInternet = useCallback((plan: InternetPlan) => {
+        telemetry.track({ type: 'internet_selected', payload: { planId: plan.id, planName: plan.name } });
         if (plan.id === 'res-600') {
             setShowUpgradeModal(true);
             setCart(prev => ({ ...prev, internet: plan }));
@@ -148,21 +219,29 @@ const App: React.FC = () => {
             internet: plan,
         }));
 
-        setNextStepId('omni');
+        setActiveSection('omni');
     }, []);
 
     const handleUpgradeAccept = () => {
         const plan800 = DB.internet.casa.find(p => p.id === 'res-800');
+        telemetry.track({ 
+            type: 'upgrade_nudge_response', 
+            payload: { accepted: true, originalPlanId: cart.internet?.id || '', targetPlanId: 'res-800' } 
+        });
         if (plan800) {
             setCart(prev => ({ ...prev, internet: plan800 }));
         }
         setShowUpgradeModal(false);
-        setNextStepId('omni');
+        setActiveSection('omni');
     };
 
     const handleUpgradeDecline = () => {
+        telemetry.track({ 
+            type: 'upgrade_nudge_response', 
+            payload: { accepted: false, originalPlanId: cart.internet?.id || '', targetPlanId: 'res-800' } 
+        });
         setShowUpgradeModal(false);
-        setNextStepId('omni');
+        setActiveSection('omni');
     };
 
     const handleSelectApp = useCallback((app: AppInfo) => {
@@ -170,7 +249,13 @@ const App: React.FC = () => {
         setCart(prev => {
             const newApps = [...prev.apps];
             const appIndex = newApps.findIndex(a => a.id === app.id);
+            const action = appIndex > -1 ? 'removed' : 'added';
             
+            telemetry.track({ 
+                type: 'addon_toggle', 
+                payload: { id: app.id, name: app.name, action, category: 'apps' } 
+            });
+
             if (appIndex > -1) {
                 newApps.splice(appIndex, 1);
             } else {
@@ -187,25 +272,36 @@ const App: React.FC = () => {
     const handleSelectOmni = useCallback((plan: OmniPlan) => {
         setSelectedProfileId(null);
         setCart(prev => {
+            const isRemoving = prev.omni?.id === plan.id;
+            telemetry.track({ 
+                type: 'addon_toggle', 
+                payload: { id: plan.id, name: plan.name, action: isRemoving ? 'removed' : 'added', category: 'omni' } 
+            });
             return {
                 ...prev,
-                omni: prev.omni?.id === plan.id ? null : plan,
+                omni: isRemoving ? null : plan,
             };
         });
-        setNextStepId('omni');
+        setActiveSection('omni');
     }, []);
 
     const handleSelectNobreak = useCallback((plan: NoBreakPlan) => {
         setSelectedProfileId(null);
         setCart(prev => {
+            const isRemoving = !!prev.nobreak;
+            telemetry.track({ 
+                type: 'addon_toggle', 
+                payload: { id: plan.id, name: plan.name, action: isRemoving ? 'removed' : 'added', category: 'nobreak' } 
+            });
             return {
                 ...prev,
-                nobreak: prev.nobreak ? null : plan,
+                nobreak: isRemoving ? null : plan,
             };
         });
     }, []);
     
     const handleSelectProfile = useCallback((profile: Profile) => {
+        telemetry.track({ type: 'profile_selected', payload: { profileId: profile.id, profileName: profile.name } });
         setSelectedProfileId(profile.id);
         const config = profile.config;
         const planType = cart.planType;
@@ -221,7 +317,7 @@ const App: React.FC = () => {
         };
 
         setCart(newCart);
-        setNextStepId('omni');
+        setActiveSection('omni');
     }, [cart.planType]);
 
     const handleClearCart = useCallback(() => {
@@ -236,7 +332,7 @@ const App: React.FC = () => {
         setSelectedProfileId(null);
         setInternetViewMode('combos');
         setIsCartOpen(false);
-        setNextStepId('internet');
+        setActiveSection('internet');
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
 
@@ -256,7 +352,11 @@ const App: React.FC = () => {
     const confirmRemoval = useCallback(() => {
         if (!itemPendingRemoval) return;
 
-        const { type, id } = itemPendingRemoval;
+        const { type, id, name } = itemPendingRemoval;
+        telemetry.track({ 
+            type: 'addon_toggle', 
+            payload: { id: id || type, name, action: 'removed', category: type } 
+        });
 
         setCart(prev => {
             const newCart = { ...prev };
@@ -283,7 +383,6 @@ const App: React.FC = () => {
     }, []);
 
     const handleSkip = (targetStep: StepName) => {
-        setNextStepId(targetStep);
         const refMap: Record<string, React.RefObject<HTMLDivElement>> = {
             'omni': sectionsRef.omni,
             'nobreak': sectionsRef.nobreak,
@@ -291,6 +390,7 @@ const App: React.FC = () => {
         };
         if (refMap[targetStep]) {
             handleScrollTo(refMap[targetStep]);
+            // O observer cuidará de atualizar o activeSection
         }
     };
 
@@ -358,7 +458,6 @@ const App: React.FC = () => {
                 price: price,
                 promo: hasComboDiscount ? 'Oferta Combo' : undefined 
             });
-            // Linha da TV removida da mensagem do WhatsApp
         }
 
         if (cart.apps.length > 0) {
@@ -469,14 +568,13 @@ const App: React.FC = () => {
     }, [cart]);
 
     const internetPlans = cart.planType ? DB.internet[cart.planType] : [];
-    const showAddons = !!cart.internet;
     const isNoBreakSelected = !!cart.nobreak;
     const ProtectedIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 inline-block ml-3 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>);
     const noBreakTitle = cart.nobreak ? (<span className="flex items-center justify-center">Estou protegido<ProtectedIcon /></span>) : "3. Proteção contra falhas de energia";
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-50 pb-20 lg:pb-0">
-            <Header />
+            <Header onLogoClick={() => setShowTelemetry(prev => !prev)} />
             <main className="container mx-auto px-4 md:px-6 py-8 md:py-12 flex-grow">
                 <Section title="Monte seu combo ideal da Entre" subtitle="Siga os passos abaixo para personalizar os serviços da Entre para você." isIntro />
 
@@ -556,6 +654,7 @@ const App: React.FC = () => {
                                 )}
                             </div>
                         )}
+                        <div ref={checkoutMarkerRef} className="h-1" />
                     </div>
 
                     {showAddons && (
@@ -611,13 +710,14 @@ const App: React.FC = () => {
                     total={total} 
                     whatsAppMessage={whatsAppMessage} 
                     onClose={() => setIsCartOpen(false)} 
-                    onClearCart={handleClearCart} 
-                    comboDiscountInfo={comboDiscountInfo} 
                     onRemoveItem={handleRemoveItemRequest}
+                    comboDiscountInfo={comboDiscountInfo} 
                     upgradeComparison={upgradeComparison}
                     onAcceptUpgrade={handleUpgradeAccept}
                 />
             )}
+
+            {showTelemetry && <TelemetryDashboard onClose={() => setShowTelemetry(false)} />}
         </div>
     );
 };
