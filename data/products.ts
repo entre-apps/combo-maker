@@ -154,12 +154,12 @@ export const DB: DbData = {
         { id: 'app-socialcomics', name: 'Social Comics', tier: 'Standard', category: 'Educação e Leitura', details: 'Streaming de HQs e quadrinhos digitais com catálogo atualizado diariamente.', price: 20, comboPrice: 10 },
         { id: 'app-revistaria', name: 'Revistaria', tier: 'Standard', category: 'Educação e Leitura', details: 'Banca digital com acesso a revistas brasileiras em formato digital/PDF.', price: 20, comboPrice: 10 },
         { id: 'app-playlist', name: 'Playlist', tier: 'Standard', category: 'Música e Áudio', details: 'A plataforma oferece mais de 100 playlists de diversos gêneros e estilos musicais, todas elaboradas por profissionais do mercado. Os usuários também podem ouvir a rádio streaming, com músicas, notícias e entrevistas 24 horas por dia', price: 20, comboPrice: 10 },
-        { id: 'app-sky-light-globo', name: 'Sky+ Light (Globo)', tier: 'Advanced', category: 'Sky', details: '16 canais abertos ao vivo incluindo Globo local.', price: 25, comboPrice: 15 },
+        { id: 'app-sky-light-globo', name: 'Sky+ Light (Globo)', tier: 'Advanced', category: 'Sky', details: '17 canais abertos ao vivo incluindo Globo local.', price: 25, comboPrice: 15 },
         { id: 'app-kiddle-2', name: 'Kiddle Pass 2 usuários', tier: 'Advanced', category: 'Infantil', details: 'Plataforma de atividades educacionais e de lazer para crianças, ao vivo e em vídeo.', price: 25, comboPrice: 15 },
         { id: 'app-kaspersky-3', name: 'Kaspersky Standard (3 licenças)', tier: 'Advanced', category: 'Utilidades', details: 'Antivírus e proteção essencial com navegação segura e recursos básicos.', price: 25, comboPrice: 15 },
         { id: 'app-curtaon', name: 'Curta ON', tier: 'Advanced', category: 'Outros', details: 'Streaming do Canal Curta! com documentários e séries sobre artes e humanidades.', price: 25, comboPrice: 15 },
         { id: 'app-ojornalista', name: 'O Jornalista', tier: 'Advanced', category: 'Educação e Leitura', details: 'App para ler e ouvir jornais, revistas e podcasts de notícias brasileiros.', price: 25, comboPrice: 15 },
-        { id: 'app-sky-light-amazon', name: 'Sky+ Light (Amazon)', tier: 'Top', category: 'Sky', details: '16 canais ao vivo incluindo Globo local e acesso aos benefícios da Amazon: Prime Vídeos, Prime Music e Amazon Prime.', price: 35, comboPrice: 25 },
+        { id: 'app-sky-light-amazon', name: 'Sky+ Light (Amazon)', tier: 'Top', category: 'Sky', details: '17 canais ao vivo incluindo Globo local e acesso aos benefícios da Amazon: Prime Vídeos, Prime Music e Amazon Prime.', price: 35, comboPrice: 25 },
         { id: 'app-disney-ads', name: 'Disney+ (com anúncio)', tier: 'Top', category: 'Entretenimento', details: 'Streaming da Disney com anúncios; catálogo Disney, Pixar, Marvel, Star Wars e NatGeo.', price: 35, comboPrice: 25 },
         { id: 'app-hbo-ads', name: 'HBO Max (com anúncio)', tier: 'Top', category: 'Entretenimento', details: 'Todo conteúdo da HBO, Universo DC, Harry Potter e outras histórias imperdíveis, além de esportes ao vivo (com anúncios)', price: 35, comboPrice: 25 },
         { id: 'app-apple-tv', name: 'Apple TV+', tier: 'Top', category: 'Entretenimento', details: 'O melhor do cinema e das séries originais Apple. Histórias premiadas, dramas envolventes, documentários inovadores e muito mais.', price: 35, comboPrice: 25 },
@@ -171,7 +171,7 @@ export const DB: DbData = {
         { id: 'app-smartcontent', name: 'Smart Content', tier: 'Premium', category: 'Educação e Leitura', details: 'App de aprendizado rápido com resumos, videos e áudios curados sobre inovação e negócios.', price: 40, comboPrice: 30 },
         { id: 'app-queimadiaria', name: 'Queima Diária', tier: 'Premium', category: 'Saúde e Bem estar', details: 'App de treinos em casa focado em queima de gordura abdominal e condicionamento.', price: 40, comboPrice: 30 },
         { id: 'app-zen', name: 'Zen', tier: 'Premium', category: 'Saúde e Bem estar', details: 'App de meditação e sono com conteúdos para ansiedade, sono e bem‑estar.', price: 40, comboPrice: 30 },
-        { id: 'app-sky-full', name: 'Sky+ Full', tier: 'Sky Full', category: 'Sky', details: '91 canais ao vivo incluindo canais fechados.', price: 89.90, comboPrice: 89.90 }
+        { id: 'app-sky-full', name: 'Sky+ Full', tier: 'Sky Full', category: 'Sky', details: '90+ canais ao vivo incluindo canais fechados.', price: 89.90, comboPrice: 89.90 }
     ],
     omni: [
         { id: 'omni-cabo', name: 'OMNI LAN CABO', details: 'Ponto adicional cabeado', price: 8.00, installationDetails: '+ Instalação: R$40/ponto + R$6/m cabo' },
