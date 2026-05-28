@@ -175,7 +175,7 @@ export const DB: DbData = {
     ],
     omni: [
         { id: 'omni-cabo', name: 'OMNI LAN CABO', details: 'Ponto adicional cabeado', price: 8.00, installationDetails: '+ Instalação: R$40/ponto + R$6/m cabo' },
-        { id: 'omni-5', name: 'OMNI WiFi 5', details: 'Ponto adicional Wi-Fi 5', price: 26.00, installationDetails: '+ Instalação: R$40/ponto + R$6/m cabo' },
+        //{ id: 'omni-5', name: 'OMNI WiFi 5', details: 'Ponto adicional Wi-Fi 5', price: 26.00, installationDetails: '+ Instalação: R$40/ponto + R$6/m cabo' },
         { id: 'omni-6', name: 'OMNI WiFi 6', details: 'Ponto adicional Wi-Fi 6', price: 32.00, installationDetails: '+ Instalação: R$40/ponto + R$6/m cabo' }
     ],
     nobreak: {
