@@ -286,7 +286,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, isSelected, onSelect, 
                             {'includedBenefits' in plan && (plan as InternetPlan).includedBenefits?.length ? (
                                 <div className={`w-full mb-6 rounded-2xl border p-3 ${isDark ? 'border-white/10 bg-white/5' : 'border-entre-purple-light bg-entre-purple-light/30'}`}>
                                     <p className={`mb-2 text-[10px] font-black uppercase tracking-[0.16em] ${isDark ? 'text-white/60' : 'text-entre-purple-dark/60'}`}>
-                                        Benefício incluso no plano
+                                        Benefício incluso
                                     </p>
                                     <div className="flex flex-wrap items-center justify-center gap-3">
                                         {(plan as InternetPlan).includedBenefits!.map((benefit) => (
