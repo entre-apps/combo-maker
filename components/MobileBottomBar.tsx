@@ -12,7 +12,7 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({ total, onViewD
     if (itemCount === 0) return null;
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-200 p-4 shadow-[0_-5px_20px_rgba(0,0,0,0.1)] z-50 lg:hidden animate-slide-up">
+        <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-entre-purple-light p-4 shadow-[0_-12px_40px_rgba(41,12,76,0.12)] z-50 lg:hidden animate-slide-up">
             <div className="container mx-auto flex justify-between items-center gap-4">
                 <div className="flex flex-col">
                     <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Total</span>

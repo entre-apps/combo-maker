@@ -13,19 +13,18 @@ interface AppSectionProps {
 
 const ComboMessage: React.FC = () => {
     return (
-        <div className="text-center mb-10 p-5 bg-entre-purple-light/30 border-2 border-dashed border-entre-purple-mid/30 rounded-2xl relative overflow-hidden">
+        <div className="premium-callout text-left mb-10 p-6 md:p-8 bg-entre-purple-light/30 rounded-[28px] relative overflow-hidden">
              <div className="absolute -right-8 -top-8 w-24 h-24 bg-entre-orange opacity-10 rounded-full blur-2xl"></div>
              <div className="absolute -left-8 -bottom-8 w-24 h-24 bg-entre-purple-mid opacity-10 rounded-full blur-2xl"></div>
              
              <div className="relative z-10">
-                <span className="inline-block bg-entre-orange text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-2 shadow-sm">
+                <span className="inline-block bg-entre-orange text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-3 shadow-sm">
                     Benefício Exclusivo Entre
                 </span>
-                <p className="text-entre-purple-dark font-black text-xl mb-2 italic leading-tight">
-                    Clientes da Entre têm condições especiais na contratação de aplicativos<br/>
-                    nos combos com os planos de 800 e 920 Mega.
+                <p className="max-w-2xl font-display text-entre-purple-dark font-extrabold text-xl md:text-2xl mb-2 leading-tight tracking-tight">
+                    Aplicativos com condições especiais nos planos de 800 e 920 Mega.
                 </p>
-                <p className="text-sm text-gray-600 font-medium max-w-xl mx-auto leading-relaxed">
+                <p className="text-sm text-gray-600 font-medium max-w-xl leading-relaxed">
                     Mais velocidade, mais entretenimento e mais economia no valor final do combo.
                 </p>
              </div>
@@ -34,7 +33,7 @@ const ComboMessage: React.FC = () => {
 }
 
 // Ordem definida: Disney+ -> HBO Max -> Deezer -> Exit Lag
-const FEATURED_APP_IDS = ['app-disney-noads', 'app-hbo-noads', 'app-deezer', 'app-exitlag'];
+const FEATURED_APP_IDS = ['app-disney-noads', 'app-hbo-noads', 'app-globoplay-ads', 'app-deezer', 'app-exitlag'];
 
 export const AppSection: React.FC<AppSectionProps> = ({ apps, selectedApps, onSelectApp, hasComboDiscount, appTierCounts }) => {
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -156,16 +155,16 @@ export const AppSection: React.FC<AppSectionProps> = ({ apps, selectedApps, onSe
             <ComboMessage />
 
             {/* Seção de Destaques - Cores Padronizadas Entre */}
-            <div className="bg-gradient-to-br from-entre-purple-light/40 to-white p-6 rounded-2xl border border-entre-purple-mid/20 shadow-sm">
+            <div className="premium-callout bg-gradient-to-br from-entre-purple-light/40 to-white p-5 md:p-8 rounded-[28px] border border-entre-purple-mid/20 shadow-sm">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <div className="flex items-center gap-2">
-                        <span className="bg-entre-orange text-white text-[10px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider shadow-sm">Super Destaque</span>
-                        <h3 className="text-xl font-bold text-entre-purple-dark">Nossos favoritos com menor preço</h3>
+                        <span className="bg-entre-orange text-white text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">Destaques</span>
+                        <h3 className="text-xl font-extrabold text-entre-purple-dark">Favoritos dos clientes Entre</h3>
                     </div>
                     
                     <button 
                         onClick={handleScrollToOtherApps}
-                        className="text-xs font-bold text-entre-purple-dark bg-white border border-entre-purple-mid shadow-[0_0_12px_rgba(157,78,221,0.4)] hover:shadow-[0_0_16px_rgba(157,78,221,0.6)] hover:-translate-y-0.5 px-5 py-2.5 rounded-full transition-all flex items-center gap-2 group"
+                        className="text-xs font-bold text-entre-purple-dark bg-white border border-entre-purple-mid/20 shadow-sm hover:shadow-md hover:-translate-y-0.5 px-5 py-2.5 rounded-full transition-all flex items-center gap-2 group"
                     >
                         Ver todos os Apps
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 group-hover:translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>

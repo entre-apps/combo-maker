@@ -56,7 +56,7 @@ export const Summary: React.FC<SummaryProps> = ({ summaryItems, total, whatsAppM
             onClick={onClose}
         >
             <div 
-                className="bg-white p-6 md:p-8 rounded-xl shadow-2xl max-w-2xl w-full relative transform transition-all duration-300 ease-in-out opacity-0 animate-fade-in-scale"
+                className="premium-summary bg-white p-6 md:p-8 rounded-[30px] shadow-2xl max-w-2xl w-full relative transform transition-all duration-300 ease-in-out opacity-0 animate-fade-in-scale"
                 onClick={(e) => e.stopPropagation()}
             >
                 <button 
@@ -67,7 +67,8 @@ export const Summary: React.FC<SummaryProps> = ({ summaryItems, total, whatsAppM
                 </button>
                 
                 <div className="max-h-[80vh] overflow-y-auto custom-scrollbar pr-2">
-                    <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Resumo do Pedido</h3>
+                    <span className="block text-center text-[10px] font-black uppercase tracking-[0.2em] text-entre-purple-mid">Seu combo Entre</span>
+                    <h3 className="mt-1 text-2xl font-extrabold text-entre-purple-dark mb-6 text-center">Resumo do pedido</h3>
                     
                     <div className="space-y-2 mb-6">
                         {summaryItems.length > 0 ? (
@@ -195,7 +196,7 @@ export const Summary: React.FC<SummaryProps> = ({ summaryItems, total, whatsAppM
                         <button
                             onClick={handleWhatsAppClick}
                             disabled={summaryItems.length === 0}
-                            className="w-full mt-2 text-lg font-bold py-3 px-6 rounded-lg shadow-md transition-all duration-300 ease-in-out bg-entre-purple-dark text-white hover:bg-entre-purple-mid disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full mt-2 text-lg font-bold py-3.5 px-6 rounded-full shadow-md transition-all duration-500 ease-in-out bg-entre-purple-dark text-white hover:bg-entre-purple-mid disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             Enviar meu pacote
                         </button>

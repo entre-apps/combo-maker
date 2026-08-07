@@ -24,13 +24,17 @@ export const Header: React.FC<HeaderProps> = ({ onLogoClick }) => {
 
     return (
         <header className="bg-white/90 backdrop-blur-xl border-b border-entre-purple-light sticky top-0 z-40">
-            <div className="container mx-auto px-4 md:px-6 py-3 flex justify-between items-center">
-                <div 
+            <div className="container mx-auto max-w-[1440px] px-4 md:px-6 py-3 flex justify-between items-center">
+                <div className="flex items-center gap-4">
+                <div
                     onClick={handleLogoClick}
                     className="cursor-default select-none transition-transform active:scale-95"
                     title="Entre Combo Builder"
                 >
                     <img src="/images/entre_logo.png" alt="Logo da Entre" className="w-[100px] h-10" />
+                </div>
+                <div className="hidden h-7 w-px bg-entre-purple-light sm:block" />
+                <span className="hidden text-xs font-extrabold uppercase tracking-[0.16em] text-entre-purple-dark/55 sm:block">Monte seu combo</span>
                 </div>
                 <a 
                     href="https://wa.me/5522974001553" 

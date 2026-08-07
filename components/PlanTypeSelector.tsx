@@ -6,60 +6,31 @@ interface PlanTypeSelectorProps {
     onSelectType: (type: PlanType) => void;
 }
 
-const HomeIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-    </svg>
-);
-
-const BuildingIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M21 11.01L3 11v11h18V11.01zM21 3H3v6h18V3zM11 18H7v-4h4v4zm8 0h-4v-4h4v4z"/>
-    </svg>
-);
-
-
 export const PlanTypeSelector: React.FC<PlanTypeSelectorProps> = ({ selectedType, onSelectType }) => {
-    
-    const baseButtonClasses = 'w-full md:w-96 text-left p-6 rounded-[26px] shadow-[0_16px_45px_rgba(41,12,76,0.08)] border-2 transition-all duration-300 ease-in-out transform hover:-translate-y-1 active:scale-[0.98] flex items-center gap-5';
-
-    const getButtonClasses = (type: PlanType) => {
-        if (selectedType === type) {
-            return `${baseButtonClasses} bg-entre-purple-light border-entre-purple-dark ring-4 ring-entre-purple-mid/30`;
-        }
-        return `${baseButtonClasses} bg-white border-transparent hover:border-entre-purple-mid`;
-    };
+    const getButtonClasses = (type: PlanType) => selectedType === type
+        ? 'bg-entre-purple-dark text-white shadow-[0_10px_28px_rgba(90,24,154,.24)]'
+        : 'bg-transparent text-entre-purple-dark hover:bg-white';
 
     return (
-        <section className="mb-12">
-            <h2 className="text-3xl font-bold text-entre-purple-dark mb-2 text-center">Comece por aqui</h2>
-            <p className="text-lg text-gray-600 mb-8 text-center">Para quem você está contratando?</p>
-            <div className="flex flex-col md:flex-row justify-center items-stretch gap-6 max-w-4xl mx-auto">
+        <section className="audience-selector mb-10 md:mb-14">
+            <div className="mb-5 text-center">
+                <span className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-entre-purple-mid">Escolha seu perfil</span>
+                <h2 className="mt-2 text-2xl md:text-3xl font-extrabold text-entre-purple-dark">Qual internet combina com você?</h2>
+            </div>
+            <div className="mx-auto grid max-w-md grid-cols-2 rounded-full border border-entre-purple-mid/15 bg-entre-purple-light/45 p-1.5 shadow-inner">
                 <button
                     onClick={() => onSelectType('casa')}
-                    className={getButtonClasses('casa')}
+                    className={`rounded-full px-5 py-3.5 text-sm font-extrabold transition-all duration-500 ${getButtonClasses('casa')}`}
                     aria-pressed={selectedType === 'casa'}
                 >
-                    <div className="flex-shrink-0 text-entre-purple-mid">
-                        <HomeIcon />
-                    </div>
-                    <div>
-                        <h3 className="text-xl font-bold text-entre-purple-dark">Para minha Casa</h3>
-                        <p className="text-gray-600 mt-1">A melhor conexão para streaming, jogos e home office.</p>
-                    </div>
+                    Residencial
                 </button>
                 <button
                     onClick={() => onSelectType('empresa')}
-                    className={getButtonClasses('empresa')}
+                    className={`rounded-full px-5 py-3.5 text-sm font-extrabold transition-all duration-500 ${getButtonClasses('empresa')}`}
                     aria-pressed={selectedType === 'empresa'}
                 >
-                     <div className="flex-shrink-0 text-entre-purple-mid">
-                        <BuildingIcon />
-                    </div>
-                    <div>
-                        <h3 className="text-xl font-bold text-entre-purple-dark">Para minha Empresa</h3>
-                        <p className="text-gray-600 mt-1">Soluções de alta velocidade e estabilidade para o seu negócio.</p>
-                    </div>
+                    Empresarial
                 </button>
             </div>
         </section>

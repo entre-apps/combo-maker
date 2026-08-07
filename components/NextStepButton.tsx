@@ -19,12 +19,9 @@ export const NextStepButton: React.FC<NextStepButtonProps> = ({ label, targetNam
     if (variant === 'mobile') {
         return (
             <div className="fixed bottom-[90px] right-4 z-30 lg:hidden animate-fade-in-scale">
-                 {/* Glow Compacto */}
-                <div className="absolute -inset-1 bg-gradient-to-r from-entre-purple-mid to-entre-orange rounded-full blur opacity-60 animate-pulse"></div>
-                
                 <button 
                     onClick={onClick}
-                    className="rotating-border-container relative bg-white rounded-full p-[2px] shadow-xl transform active:scale-95 transition-all"
+                    className="relative bg-white/95 backdrop-blur-xl rounded-full border border-entre-purple-mid/20 shadow-[0_16px_40px_rgba(41,12,76,0.18)] transform active:scale-[0.98] transition-all"
                 >
                     <div className="bg-white rounded-full px-4 py-2 flex items-center gap-3">
                         <div className="flex flex-col items-start mr-1">
@@ -43,16 +40,11 @@ export const NextStepButton: React.FC<NextStepButtonProps> = ({ label, targetNam
     // Desktop Version
     return (
         <div className="mt-6 relative group w-full">
-            {/* Efeito de Glow/Blur atrás */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-entre-purple-mid to-entre-orange rounded-xl blur opacity-40 group-hover:opacity-75 transition duration-500"></div>
-            
-            {/* Botão Principal com Borda Giratória via CSS Class */}
             <button 
                 onClick={onClick}
-                className="rotating-border-container relative w-full bg-white rounded-xl p-[2px] cursor-pointer transform transition-all duration-200 hover:scale-[1.01] active:scale-[0.98]"
+                className="premium-card relative w-full bg-white rounded-2xl border border-entre-purple-mid/15 cursor-pointer transition-all duration-500 active:scale-[0.99] overflow-hidden"
             >
-                {/* Miolo do Botão (fundo branco) */}
-                <div className="bg-white rounded-[10px] px-6 py-4 flex items-center justify-between">
+                <div className="bg-gradient-to-r from-white to-entre-purple-light/30 px-6 py-4 flex items-center justify-between">
                     <div className="flex flex-col items-start">
                         <span className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-0.5">Próxima Etapa</span>
                         <div className="flex items-center">
