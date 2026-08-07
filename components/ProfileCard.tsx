@@ -59,6 +59,8 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ profile, planType, isS
             : profile);
     };
 
+    const hasPromotionalPrice = Boolean(internetPlan?.fullPrice && prices.full !== prices.current);
+
     return (
         <article className={`premium-card relative flex h-full flex-col overflow-hidden rounded-[26px] bg-white ${isSelected ? 'border-entre-purple-mid ring-4 ring-entre-purple-mid/15' : ''}`}>
             {profile.isPopular && (
@@ -116,10 +118,12 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ profile, planType, isS
             <div className={`mt-auto px-6 py-5 ${profile.isPopular ? 'bg-entre-purple-dark text-white' : 'bg-entre-purple-light/45 text-entre-purple-dark'}`}>
                 <p className="text-[9px] font-bold uppercase tracking-[0.14em] opacity-60">Combo completo por</p>
                 <div className="mt-1 flex items-baseline gap-1">
-                    <span className="font-display text-3xl font-extrabold tracking-tight">{formatCurrency(prices.current)}</span>
+                    <span className="font-display text-3xl font-extrabold tracking-tight">
+                        {formatCurrency(prices.current)}{hasPromotionalPrice && <sup className="ml-0.5 text-sm">*</sup>}
+                    </span>
                     <span className="text-[10px] opacity-60">/mês</span>
                 </div>
-                {prices.full !== prices.current && <p className="mt-1 text-[9px] opacity-60">Após 3 meses: {formatCurrency(prices.full)}/mês</p>}
+                {hasPromotionalPrice && <p className="mt-1 text-[9px] opacity-60">*Após 3 meses: {formatCurrency(prices.full)}/mês</p>}
                 <button
                     type="button"
                     onClick={handleSelect}
