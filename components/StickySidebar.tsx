@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { WHATSAPP_PHONE } from '../config/contact';
 import { formatCurrency } from '../utils/formatters';
 import type { UpgradeComparison, SummaryItem } from '../types';
 import { telemetry } from '../utils/telemetry';
@@ -38,9 +39,8 @@ export const StickySidebar: React.FC<StickySidebarProps> = ({ summaryItems, tota
             type: 'conversion_initiated', 
             payload: { totalFull: total.full, totalPromo: total.promo, itemsCount: summaryItems.length } 
         });
-        const phoneNumber = '5522974001553';
         const encodedMessage = encodeURIComponent(whatsAppMessage);
-        const url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+        const url = `https://wa.me/${WHATSAPP_PHONE}?text=${encodedMessage}`;
         window.open(url, '_blank');
     };
 
