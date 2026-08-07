@@ -32,6 +32,14 @@ export interface InternetPlan {
     comboDiscount?: boolean;
     highlight?: string;
     isPopular?: boolean;
+    includedBenefits?: IncludedBenefit[];
+}
+
+export interface IncludedBenefit {
+    id: string;
+    name: string;
+    logoUrl: string;
+    label?: string;
 }
 
 export interface TvPlan {

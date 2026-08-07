@@ -62,7 +62,8 @@ export const DB: DbData = {
                 description: 'Sob medida para navegação, redes sociais e vídeo chamadas',
                 features: ['Instalação Gratuita¹', 'Wifi 5', 'Upload 100 Mega'],
                 price: 99.90, 
-                priceDetails: 'R$99,90'
+                priceDetails: 'R$99,90',
+                includedBenefits: [{ id: 'skeelo', name: 'Skeelo', logoUrl: '/images/skeelo_logo.png', label: 'Benefício incluso' }]
             },
             { 
                 id: 'res-600', 
@@ -70,7 +71,8 @@ export const DB: DbData = {
                 description: 'Mais velocidade para as atividades do seu dia a dia',
                 features: ['Instalação Gratuita¹', 'Wifi 5', 'Upload 150 Mega'],
                 price: 118.90, 
-                priceDetails: 'R$118,90'
+                priceDetails: 'R$118,90',
+                includedBenefits: [{ id: 'skeelo', name: 'Skeelo', logoUrl: '/images/skeelo_logo.png', label: 'Benefício incluso' }]
             },
             { 
                 id: 'res-800', 
@@ -84,7 +86,8 @@ export const DB: DbData = {
                 promo: '*Nos primeiros 3 meses, após R$119,90/mês', 
                 bestOffer: true, 
                 comboDiscount: true,
-                isPopular: true 
+                isPopular: true,
+                includedBenefits: [{ id: 'skeelo', name: 'Skeelo', logoUrl: '/images/skeelo_logo.png', label: 'Benefício incluso' }]
             },
             { 
                 id: 'res-920', 
@@ -93,7 +96,8 @@ export const DB: DbData = {
                 features: ['Instalação Gratuita¹', 'Wifi 6 (mais estável)', 'Upload 500 Mega'],
                 price: 169.90, 
                 priceDetails: 'R$169,90', 
-                comboDiscount: true 
+                comboDiscount: true,
+                includedBenefits: [{ id: 'skeelo', name: 'Skeelo', logoUrl: '/images/skeelo_logo.png', label: 'Benefício incluso' }]
             }
         ],
         empresa: [
@@ -162,6 +166,7 @@ export const DB: DbData = {
         { id: 'app-sky-light-amazon', name: 'Sky+ Light (Amazon)', tier: 'Top', category: 'Sky', details: '17 canais ao vivo incluindo Globo local e acesso aos benefícios da Amazon: Prime Vídeos, Prime Music e Amazon Prime.', price: 35, comboPrice: 25 },
         { id: 'app-disney-ads', name: 'Disney+ (com anúncio)', tier: 'Top', category: 'Entretenimento', details: 'Streaming da Disney com anúncios; catálogo Disney, Pixar, Marvel, Star Wars e NatGeo.', price: 35, comboPrice: 25 },
         { id: 'app-hbo-ads', name: 'HBO Max (com anúncio)', tier: 'Top', category: 'Entretenimento', details: 'Todo conteúdo da HBO, Universo DC, Harry Potter e outras histórias imperdíveis, além de esportes ao vivo (com anúncios)', price: 35, comboPrice: 25 },
+        { id: 'app-globoplay-ads', name: 'Globoplay com anúncios', tier: 'Top', category: 'Entretenimento', details: 'Novelas, séries, filmes, jornalismo e produções Globo em um só lugar, com exibição de anúncios.', price: 35, comboPrice: 25 },
         { id: 'app-apple-tv', name: 'Apple TV+', tier: 'Top', category: 'Entretenimento', details: 'O melhor do cinema e das séries originais Apple. Histórias premiadas, dramas envolventes, documentários inovadores e muito mais.', price: 35, comboPrice: 25 },
         { id: 'app-cindie', name: 'C Indie', tier: 'Top', category: 'Outros', details: 'Cindie: streaming de cinema e séries independentes, curadoria internacional.', price: 35, comboPrice: 25 },
         { id: 'app-leitura360', name: 'Leitura 360', tier: 'Top', category: 'Educação e Leitura', details: 'Plataforma de leitura multimídia com audiolivros e revistas', price: 35, comboPrice: 25 },

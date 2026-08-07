@@ -49,7 +49,7 @@ export const Section: React.FC<SectionProps> = ({ title, subtitle, children, isI
     if (isIntro) {
         return (
             <section className="text-center mb-12">
-                <h1 className="text-4xl font-bold text-entre-purple-dark mb-2">{title}</h1>
+                <h1 className="font-display text-4xl font-extrabold text-entre-ink mb-2">{title}</h1>
                 <p className="text-xl text-gray-600">{subtitle}</p>
             </section>
         );
@@ -62,7 +62,7 @@ export const Section: React.FC<SectionProps> = ({ title, subtitle, children, isI
                     <img src={logoSrc} alt="Logo da Seção" className="h-24" />
                 </div>
             )}
-            <h2 className={`text-3xl font-bold mb-2 text-center ${titleColor}`}>{title}</h2>
+            <h2 className={`font-display text-3xl font-extrabold mb-2 text-center ${titleColor}`}>{title}</h2>
             <p className={`text-lg mb-8 text-center ${subtitleColor}`}>{subtitle}</p>
             
             {onSecondaryAction && secondaryActionText && (
