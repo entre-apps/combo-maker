@@ -21,7 +21,7 @@ const CheckIcon = () => (
     </svg>
 );
 
-const Price: React.FC<{ plan: Plan; inverse?: boolean }> = ({ plan, inverse = false }) => {
+const Price: React.FC<{ plan: Plan; inverse?: boolean; showAsterisk?: boolean }> = ({ plan, inverse = false, showAsterisk = false }) => {
     const [integer, cents] = plan.price.toFixed(2).replace('.', ',').split(',');
     return (
         <div className={inverse ? 'text-white' : 'text-entre-purple-dark'}>
@@ -29,6 +29,7 @@ const Price: React.FC<{ plan: Plan; inverse?: boolean }> = ({ plan, inverse = fa
                 <span className="mr-1 mt-1 text-sm font-extrabold">R$</span>
                 <span className="font-display text-4xl font-extrabold tracking-[-0.06em]">{integer}</span>
                 <span className="mt-1 text-lg font-extrabold">,{cents}</span>
+                {showAsterisk && <span className="ml-0.5 mt-0.5 text-sm font-extrabold">*</span>}
                 <span className={`ml-1 self-end pb-1 text-[11px] font-semibold ${inverse ? 'text-white/65' : 'text-gray-500'}`}>/mês</span>
             </div>
         </div>
@@ -111,7 +112,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({
 
                 <div className="mt-auto rounded-b-[25px] border-t border-entre-purple-light bg-white px-5 pb-5 pt-4 text-center">
                     <div className="flex h-14 items-center justify-center">
-                        <Price plan={internetPlan} />
+                        <Price plan={internetPlan} showAsterisk={internetPlan.id === 'res-800'} />
                     </div>
                     <div className="flex h-8 items-start justify-center">
                         {internetPlan.promo && (
