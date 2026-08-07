@@ -113,7 +113,7 @@ export const DB: DbData = {
                 id: 'emp-800-gp', 
                 name: '800 Mega + Gerência Proativa', 
                 description: 'Conectividade inteligente com monitoramento ativo na sua operação.',
-                features: ['Instalação Gratuita¹', 'Wifi 6 (mais estável)', 'Upload simétrico', 'Gerência Proativa²', 'IP Fixo³'],
+                features: ['Instalação Gratuita¹', 'Wifi 6 (mais estável)', 'Upload simétrico', 'Gerência Proativa²'],
                 price: 219.90, 
                 priceDetails: 'R$219,90'
             },
