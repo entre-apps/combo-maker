@@ -5,7 +5,7 @@ export const BusinessFeaturesExplanation: React.FC = () => {
     return (
         <div className="mt-12 space-y-8 max-w-5xl mx-auto">
             {/* Bloco Gerência Proativa */}
-            <div className="bg-white rounded-[2.5rem] shadow-xl overflow-hidden flex flex-col md:flex-row items-stretch border border-gray-100">
+            <div className="premium-card bg-white rounded-[2rem] shadow-xl overflow-hidden flex flex-col md:flex-row items-stretch border border-gray-100">
                 <div className="md:w-1/2 h-64 md:h-auto overflow-hidden">
                     <img 
                         src="/images/gerencia_proativa_bg.png" 
@@ -25,7 +25,7 @@ export const BusinessFeaturesExplanation: React.FC = () => {
             </div>
 
             {/* Bloco IP Fixo */}
-            <div className="bg-white rounded-[2.5rem] shadow-xl overflow-hidden flex flex-col md:flex-row-reverse items-stretch border border-gray-100">
+            <div className="premium-card bg-white rounded-[2rem] shadow-xl overflow-hidden flex flex-col md:flex-row-reverse items-stretch border border-gray-100">
                 <div className="md:w-1/2 h-64 md:h-auto overflow-hidden">
                     <img 
                         src="/images/ip_fixo_bg.png" 

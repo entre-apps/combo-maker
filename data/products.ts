@@ -63,7 +63,7 @@ export const DB: DbData = {
                 features: ['Instalação Gratuita¹', 'Wifi 5', 'Upload 100 Mega'],
                 price: 99.90, 
                 priceDetails: 'R$99,90',
-                includedBenefits: [{ id: 'skeelo', name: 'Skeelo', logoUrl: '/images/skeelo_logo.png', label: 'Livro & Audiolivros' }]
+                includedBenefits: [{ id: 'skeelo', name: 'Skeelo', logoUrl: '/images/skeelo_logo.png', label: 'Livros e Audiolivros' }]
             },
             { 
                 id: 'res-600', 
@@ -72,7 +72,7 @@ export const DB: DbData = {
                 features: ['Instalação Gratuita¹', 'Wifi 5', 'Upload 150 Mega'],
                 price: 118.90, 
                 priceDetails: 'R$118,90',
-                includedBenefits: [{ id: 'skeelo', name: 'Skeelo', logoUrl: '/images/skeelo_logo.png', label: 'Livro & Audiolivros' }]
+                includedBenefits: [{ id: 'skeelo', name: 'Skeelo', logoUrl: '/images/skeelo_logo.png', label: 'Livros e Audiolivros' }]
             },
             { 
                 id: 'res-800', 
@@ -87,7 +87,7 @@ export const DB: DbData = {
                 bestOffer: true, 
                 comboDiscount: true,
                 isPopular: true,
-                includedBenefits: [{ id: 'skeelo', name: 'Skeelo', logoUrl: '/images/skeelo_logo.png', label: 'Livro & Audiolivros' }]
+                includedBenefits: [{ id: 'skeelo', name: 'Skeelo', logoUrl: '/images/skeelo_logo.png', label: 'Livros e Audiolivros' }]
             },
             { 
                 id: 'res-920', 
@@ -97,7 +97,7 @@ export const DB: DbData = {
                 price: 169.90, 
                 priceDetails: 'R$169,90', 
                 comboDiscount: true,
-                includedBenefits: [{ id: 'skeelo', name: 'Skeelo', logoUrl: '/images/skeelo_logo.png', label: 'Livro & Audiolivros' }]
+                includedBenefits: [{ id: 'skeelo', name: 'Skeelo', logoUrl: '/images/skeelo_logo.png', label: 'Livros e Audiolivros' }]
             }
         ],
         empresa: [

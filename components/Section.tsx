@@ -9,7 +9,7 @@ interface SkipButtonProps {
 const SkipButton: React.FC<SkipButtonProps> = ({ onClick, isDark }) => (
     <button 
         onClick={onClick} 
-        className={`mx-auto block mt-[-1rem] mb-4 text-xs font-bold rounded-full px-4 py-1.5 transition-all duration-300 shadow-sm transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+        className={`mx-auto block mt-[-1rem] mb-6 text-[10px] font-extrabold uppercase tracking-[0.12em] rounded-full px-4 py-2 transition-all duration-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 ${
             isDark 
             ? 'bg-gray-700/80 border border-gray-600 text-gray-300 hover:bg-gray-700 focus:ring-entre-purple-mid focus:ring-offset-gray-800' 
             : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-100 focus:ring-entre-purple-mid focus:ring-offset-white'
@@ -48,7 +48,7 @@ export const Section: React.FC<SectionProps> = ({ title, subtitle, children, isI
 
     if (isIntro) {
         return (
-            <section className="text-center mb-12">
+            <section className="editorial-hero text-center mb-14 md:mb-20 animate-fade-in-scale">
                 <h1 className="font-display text-4xl font-extrabold text-entre-ink mb-2">{title}</h1>
                 <p className="text-xl text-gray-600">{subtitle}</p>
             </section>
@@ -56,10 +56,10 @@ export const Section: React.FC<SectionProps> = ({ title, subtitle, children, isI
     }
     
     return (
-        <section className={`py-12 border-t ${borderClass} relative`}>
+        <section className={`editorial-section py-14 md:py-20 border-t ${borderClass} relative`}>
             {logoSrc && (
-                <div className="absolute top-12 right-12 hidden lg:block" aria-hidden="true">
-                    <img src={logoSrc} alt="Logo da Seção" className="h-24" />
+                <div className="mb-5 flex justify-center" aria-hidden="true">
+                    <img src={logoSrc} alt="" className="h-14 w-auto object-contain" />
                 </div>
             )}
             <h2 className={`font-display text-3xl font-extrabold mb-2 text-center ${titleColor}`}>{title}</h2>
@@ -69,7 +69,7 @@ export const Section: React.FC<SectionProps> = ({ title, subtitle, children, isI
                 <div className="text-center mb-8">
                      <button
                         onClick={onSecondaryAction}
-                        className="inline-flex items-center justify-center px-5 py-2.5 text-base font-bold text-entre-purple-dark bg-entre-purple-light border-2 border-entre-purple-mid/20 rounded-lg hover:bg-white hover:border-entre-purple-mid transition-all duration-300 ease-in-out transform hover:scale-105"
+                        className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-extrabold text-entre-purple-dark bg-entre-purple-light/60 border border-entre-purple-mid/15 rounded-full hover:bg-white hover:border-entre-purple-mid/40 transition-all duration-500 ease-in-out"
                     >
                         <LightbulbIcon />
                         {secondaryActionText}

@@ -40,7 +40,7 @@ interface PendingRemoval {
 
 const App: React.FC = () => {
     const [cart, setCart] = useState<CartState>({
-        planType: null,
+        planType: 'casa',
         internet: null,
         tv: null,
         apps: [],
@@ -53,7 +53,7 @@ const App: React.FC = () => {
     const [itemPendingRemoval, setItemPendingRemoval] = useState<PendingRemoval | null>(null);
     const [showTelemetry, setShowTelemetry] = useState(false);
     
-    const [internetViewMode, setInternetViewMode] = useState<InternetViewMode>('combos');
+    const [internetViewMode, setInternetViewMode] = useState<InternetViewMode>('plans');
     const [activeSection, setActiveSection] = useState<StepName>('internet');
     const lastTrackedStep = useRef<StepName | null>(null);
 
@@ -190,7 +190,7 @@ const App: React.FC = () => {
     const handleSelectPlanType = useCallback((type: PlanType) => {
         telemetry.track({ type: 'plan_type_selected', payload: { planType: type } });
         setSelectedProfileId(null);
-        setInternetViewMode(PROFILES[type]?.length > 0 ? 'combos' : 'plans');
+        setInternetViewMode('plans');
         setCart({
             planType: type,
             ...resetCartAddons(),
@@ -322,7 +322,7 @@ const App: React.FC = () => {
 
     const handleClearCart = useCallback(() => {
         setCart({
-            planType: null,
+            planType: 'casa',
             internet: null,
             tv: null,
             apps: [],
@@ -330,7 +330,7 @@ const App: React.FC = () => {
             nobreak: null,
         });
         setSelectedProfileId(null);
-        setInternetViewMode('combos');
+        setInternetViewMode('plans');
         setIsCartOpen(false);
         setActiveSection('internet');
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -573,9 +573,9 @@ const App: React.FC = () => {
     const noBreakTitle = cart.nobreak ? (<span className="flex items-center justify-center">Estou protegido<ProtectedIcon /></span>) : "3. Proteção contra falhas de energia";
 
     return (
-        <div className="flex flex-col min-h-screen bg-gray-50 pb-20 lg:pb-0">
+        <div className="app-shell flex flex-col min-h-screen pb-20 lg:pb-0">
             <Header onLogoClick={() => setShowTelemetry(prev => !prev)} />
-            <main className="container mx-auto px-4 md:px-6 py-8 md:py-12 flex-grow">
+            <main className="editorial-main container mx-auto px-4 md:px-6 py-6 md:py-10 flex-grow">
                 <Section title="Monte seu combo ideal da Entre" subtitle="Siga os passos abaixo para personalizar os serviços da Entre para você." isIntro />
 
                 <div className="lg:grid lg:grid-cols-12 lg:gap-8">
@@ -592,7 +592,7 @@ const App: React.FC = () => {
                                         secondaryActionText={PROFILES[cart.planType]?.length > 0 ? (internetViewMode === 'plans' ? "Ver Combos Sugeridos" : "Ver Planos Individuais") : undefined}
                                     >
                                         {internetViewMode === 'plans' ? (
-                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in-scale">
+                                            <div className={`grid grid-cols-1 gap-5 md:grid-cols-2 animate-fade-in-scale ${showAddons ? 'xl:grid-cols-2' : 'xl:grid-cols-4'}`}>
                                                 {internetPlans.map(plan => (
                                                     <PlanCard key={plan.id} plan={plan} isSelected={cart.internet?.id === plan.id} onSelect={() => handleSelectInternet(plan)} planType="internet" bestOfferText={cart.planType === 'casa' ? 'Melhor Escolha' : 'Melhor Oferta'} />
                                                 ))}
@@ -608,6 +608,16 @@ const App: React.FC = () => {
 
                                         <p className="text-xs text-gray-400 mt-6 text-center">
                                             ¹Valor da instalação R$500,00 com desconto de até 100% na adesão do Contrato de Permanência.
+                                        </p>
+                                        <p className="mt-2 text-center">
+                                            <a
+                                                href="https://entre.net.br/contratos/"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-xs font-extrabold text-entre-purple-dark underline decoration-entre-purple-mid/35 underline-offset-4 transition-colors hover:text-entre-purple-mid"
+                                            >
+                                                Etiquetas e Condições de oferta
+                                            </a>
                                         </p>
 
                                         {/* EXIBIÇÃO DA DESCRIÇÃO EMPRESARIAL */}
@@ -628,19 +638,19 @@ const App: React.FC = () => {
                                 <div ref={sectionsRef.omni}>
                                     <Section title="2. Expandindo a cobertura WIFI" subtitle="" onSkip={() => handleSkip('nobreak')} logoSrc="/images/omni_logo.png">
                                         <OmniExplanation />
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
                                             {DB.omni.map(plan => (
                                                 <PlanCard key={plan.id} plan={plan} isSelected={cart.omni?.id === plan.id} onSelect={() => handleSelectOmni(plan)} planType="addon" />
                                             ))}
                                         </div>
                                     </Section>
                                 </div>
-                                <div ref={sectionsRef.nobreak} className={`relative -mx-4 md:-mx-6 lg:mx-0 px-4 md:px-6 lg:rounded-3xl transition-colors duration-700 ease-in-out ${isNoBreakSelected ? 'bg-entre-purple-light/50' : 'bg-gray-900'}`} id="section-nobreak">
+                                <div ref={sectionsRef.nobreak} className={`service-surface relative -mx-4 md:-mx-6 lg:mx-0 px-4 md:px-6 lg:rounded-[32px] transition-colors duration-700 ease-in-out ${isNoBreakSelected ? 'is-selected' : ''}`} id="section-nobreak">
                                     <div className="absolute top-8 right-8 hidden lg:block opacity-80 pointer-events-none" aria-hidden="true"><img src="/images/nobreak_source.png" alt="" className="h-20 w-auto max-w-[200px]" /></div>
-                                    <Section title={noBreakTitle} subtitle="" isDarkSection={!isNoBreakSelected} onSkip={isBusiness ? undefined : () => handleSkip('apps')}>
-                                        <NoBreakExplanation isDark={!isNoBreakSelected} />
+                                    <Section title={noBreakTitle} subtitle="" isDarkSection={false} onSkip={isBusiness ? undefined : () => handleSkip('apps')}>
+                                        <NoBreakExplanation isDark={false} />
                                         <div className="max-w-md mx-auto">
-                                            <PlanCard key={DB.nobreak.id} plan={DB.nobreak} isSelected={isNoBreakSelected} onSelect={() => handleSelectNobreak(DB.nobreak)} planType="addon" isDark={!isNoBreakSelected} autoHeight={true} />
+                                            <PlanCard key={DB.nobreak.id} plan={DB.nobreak} isSelected={isNoBreakSelected} onSelect={() => handleSelectNobreak(DB.nobreak)} planType="addon" isDark={false} autoHeight={true} />
                                         </div>
                                     </Section>
                                 </div>

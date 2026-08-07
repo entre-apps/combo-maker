@@ -50,9 +50,10 @@ export const StickySidebar: React.FC<StickySidebarProps> = ({ summaryItems, tota
     const isLowTierPlan = summaryItems.some(item => item.id === 'res-500' || item.id === 'res-600');
 
     return (
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden transition-all duration-300">
-            <div className="bg-entre-purple-dark p-4 text-white text-center">
-                <h3 className="font-bold text-lg uppercase tracking-wide">Seu Pacote Personalizado</h3>
+        <div className="premium-summary bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden transition-all duration-300">
+            <div className="bg-gradient-to-br from-entre-purple-dark to-entre-ink px-6 py-5 text-white">
+                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/55">Resumo em tempo real</span>
+                <h3 className="mt-1 font-display text-xl font-extrabold tracking-tight">Seu combo Entre</h3>
             </div>
             
             <div className="p-6 flex flex-col max-h-[calc(100vh-260px)] overflow-y-auto custom-scrollbar">
@@ -172,7 +173,7 @@ export const StickySidebar: React.FC<StickySidebarProps> = ({ summaryItems, tota
                     <button
                         onClick={handleWhatsAppClick}
                         disabled={isDisabled}
-                        className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-green-200 transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        className="w-full bg-entre-purple-dark hover:bg-entre-purple-mid text-white font-bold py-3.5 px-4 rounded-full shadow-lg shadow-purple-200 transition-all duration-500 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                         <span>Enviar meu pacote</span>
                     </button>
