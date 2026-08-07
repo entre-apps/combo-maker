@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { WHATSAPP_URL } from '../config/contact';
 
 interface HeaderProps {
     onLogoClick?: () => void;
@@ -37,7 +38,7 @@ export const Header: React.FC<HeaderProps> = ({ onLogoClick }) => {
                 <span className="hidden text-xs font-extrabold uppercase tracking-[0.16em] text-entre-purple-dark/55 sm:block">Monte seu combo</span>
                 </div>
                 <a 
-                    href="https://wa.me/5522974001553" 
+                    href={WHATSAPP_URL}
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="text-sm font-bold bg-entre-purple-brand text-white px-5 py-2.5 rounded-full hover:bg-entre-purple-dark transition-all shadow-sm hover:shadow-md"
