@@ -50,6 +50,7 @@ export const AppCard: React.FC<AppCardProps> = ({ app, isSelected, onSelect, app
             'app-hbo-noads': 'hbo_max_logo.png',
             'app-hbo-ads': 'hbo_max_logo.png',
             'app-exitlag': 'exit_lag_logo.png',
+            'app-globoplay-ads': 'globoplay_logo.png',
         };
 
         if (manualMap[appId]) {

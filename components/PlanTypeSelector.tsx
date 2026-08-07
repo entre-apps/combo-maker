@@ -21,7 +21,7 @@ const BuildingIcon = () => (
 
 export const PlanTypeSelector: React.FC<PlanTypeSelectorProps> = ({ selectedType, onSelectType }) => {
     
-    const baseButtonClasses = 'w-full md:w-96 text-left p-6 rounded-xl shadow-lg border-2 transition-all duration-300 ease-in-out transform hover:-translate-y-1 active:scale-95 flex items-center gap-5';
+    const baseButtonClasses = 'w-full md:w-96 text-left p-6 rounded-[26px] shadow-[0_16px_45px_rgba(41,12,76,0.08)] border-2 transition-all duration-300 ease-in-out transform hover:-translate-y-1 active:scale-[0.98] flex items-center gap-5';
 
     const getButtonClasses = (type: PlanType) => {
         if (selectedType === type) {

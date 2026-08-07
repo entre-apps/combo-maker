@@ -14,11 +14,14 @@
                     extend: {
                         fontFamily: {
                             sans: ['Inter', 'sans-serif'],
+                            display: ['Manrope', 'Inter', 'sans-serif'],
                         },
                         colors: {
                             'entre-purple-dark': '#5A189A',
                             'entre-purple-mid': '#9D4EDD',
                             'entre-purple-light': '#F3E6FF',
+                            'entre-ink': '#290C4C',
+                            'entre-purple-brand': '#8035D8',
                             'entre-orange': '#FF9000',
                         },
                         animation: {
@@ -31,8 +34,19 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
+    :root {
+        color-scheme: light;
+    }
+    body {
+        background:
+            radial-gradient(circle at 0 0, rgba(157, 78, 221, .11), transparent 28rem),
+            #faf8fc;
+    }
+    h1, h2, h3 {
+        font-family: Manrope, Inter, sans-serif;
+    }
     @keyframes fadeInScale {
         from {
             opacity: 0;
